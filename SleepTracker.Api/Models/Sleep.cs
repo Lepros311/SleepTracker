@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualBasic;
-
-namespace SleepTracker.Api.Models;
+﻿namespace SleepTracker.Api.Models;
 
 public class Sleep
 {
@@ -10,5 +8,7 @@ public class Sleep
 
     public DateTime End { get; set; }
 
-    public TimeSpan Duration => End - Start;
+    public TimeSpan DurationHours => End - Start;
+
+    public bool IsDeleted { get; set; } = false;
 }
