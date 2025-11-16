@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SleepTracker.Api.Models;
+using SleepTracker.Api.Responses;
 using SleepTracker.Api.Services;
 
 namespace SleepTracker.Api.Controllers
@@ -15,6 +17,16 @@ namespace SleepTracker.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult>
+        public async Task<ActionResult<PagedResponse<List<SleepDto>>>> GetPagedSleeps([FromQuery] PaginationParams paginationParams)
+        {
+            var responseWithDtos = await _sleepService.GetPagedSleeps(paginationParams);
+
+            if (responseWithDtos.Status == ResponseStatus.Fail)
+            {
+                return BadRequest(responseWithDtos.Message);
+            }
+
+            return Ok(responseWithDtos);
+        }
     }
 }
