@@ -1,4 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using SleepTracker.Api.Repositories;
+using SleepTracker.Api.Services;
+using SleepTracker.Api.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
