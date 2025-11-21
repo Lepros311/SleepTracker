@@ -21,4 +21,21 @@ public class PagedResponse<T>
         PageSize = pageSize;
         TotalRecords = totalRecords;
     }
+
+    public static PagedResponse<T> Success(T data, int pageNumber, int pageSize, int totalRecords)
+    {
+        return new PagedResponse<T>(data, pageNumber, pageSize, totalRecords)
+        {
+            Status = ResponseStatus.Success
+        };
+    }
+
+    public static PagedResponse<T> Fail(string message)
+    {
+        return new PagedResponse<T>(default, 0, 0, 0)
+        {
+            Status = ResponseStatus.Fail,
+            Message = message
+        };
+    }
 }
