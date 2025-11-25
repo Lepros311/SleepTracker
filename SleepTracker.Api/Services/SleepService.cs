@@ -22,6 +22,18 @@ public class SleepService : ISleepService
                                                                     pageSize: paginationParams.PageSize,
                                                                     totalRecords: response.TotalRecords);
 
+        if (response.Status == ResponseStatus.Fail)
+        {
+            responseWithDataDto.Status = response.Status;
+            responseWithDataDto.Message = response.Message;
+            return responseWithDataDto;
+        }
+
+        responseWithDataDto.Data = response.Data.Select(s => new SleepDto
+        {
+            Id = s.Id
+        }).ToList();
+
         return responseWithDataDto;
     }
 }

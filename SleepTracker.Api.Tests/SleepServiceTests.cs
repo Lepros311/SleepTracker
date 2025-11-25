@@ -49,7 +49,13 @@ public class SleepServiceTests
         // Arrange
         var paginationParams = new PaginationParams { Page = 1, PageSize = 10 };
 
-        _mockRepository.Setup(r => r.GetPagedSleeps(paginationParams)).ThrowsAsync(new System.Exception("DB error"));
+        var failResponse = new PagedResponse<List<Sleep>>(null, 0, 0, 0)
+        {
+            Status = ResponseStatus.Fail,
+            Message = "DB error"
+        };
+
+        _mockRepository.Setup(r => r.GetPagedSleeps(paginationParams)).ReturnsAsync(failResponse);
 
         // Act
         var result = await _service.GetPagedSleeps(paginationParams);
