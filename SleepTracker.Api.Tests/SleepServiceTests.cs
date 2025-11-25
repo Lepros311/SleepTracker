@@ -6,6 +6,7 @@ using SleepTracker.Api.Services;
 
 namespace SleepTracker.Api.Tests;
 
+[TestClass]
 public class SleepServiceTests
 {
     private Mock<ISleepRepository> _mockRepository;
