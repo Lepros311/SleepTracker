@@ -6,6 +6,7 @@ using SleepTracker.Api.Responses;
 
 namespace SleepTracker.Api.Tests;
 
+[TestClass]
 public class SleepRepositoryTests
 {
     private SleepTrackerDbContext _dbContext;
@@ -32,7 +33,7 @@ public class SleepRepositoryTests
     public async Task GetPagedSleeps_ReturnsSuccess_WithCorrectPagination()
     {
         // Arrange
-        var paginationParams = new PaginationParams { Page = 1, PageSize = 10 };
+        var paginationParams = new PaginationParams { Page = 1, PageSize = 1 };
 
         // Act
         var result = await _repository.GetPagedSleeps(paginationParams);
