@@ -15,7 +15,8 @@ public class SleepRepositoryTests
     [TestInitialize]
     public void Setup()
     {
-        var options = new DbContextOptionsBuilder<SleepTrackerDbContext>().UseInMemoryDatabase(databaseName: "SleepTrackerTestDb").Options;
+        var options = new DbContextOptionsBuilder<SleepTrackerDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()).Options;
 
         _dbContext = new SleepTrackerDbContext(options);
         _repository = new SleepRepository(_dbContext);
