@@ -17,11 +17,11 @@ public class PaginationParams
 
     public bool? SortAscending { get; set; }
 
-    public DateOnly? MinDateOfSleep { get; set; }
+    public DateTime? Start { get; set; }
 
-    public DateOnly? MaxDateOfSleep { get; set; }
+    public DateTime? End { get; set; }
 
-    public double? MinDurationHours { get; set; }
+    public TimeSpan? MinDurationHours { get; set; }
 
-    public double? MaxDurationHours { get; set; }
+    public TimeSpan? MaxDurationHours { get; set; }
 }
