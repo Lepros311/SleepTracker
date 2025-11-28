@@ -8,4 +8,6 @@ public interface ISleepService
     Task<PagedResponse<List<SleepDto>>> GetPagedSleeps(PaginationParams paginationParams);
 
     Task<BaseResponse<SleepDto>> GetSleepById(int id);
+
+    Task<BaseResponse<SleepDto>> CreateSleep(SleepDto sleepDto);
 }

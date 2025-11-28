@@ -114,4 +114,61 @@ public class SleepControllerTests
         Assert.AreEqual(404, notFoundResult.StatusCode);
         Assert.AreEqual("Sleep record not found", notFoundResult.Value);
     }
+
+    [TestMethod]
+    public async Task CreateSleep_ReturnsCreated_WhenServiceSucceeds()
+    {
+        // Arrange
+        var sleepDto = new SleepDto
+        {
+            Id = 1,
+            Start = DateTime.Now.AddHours(-8).ToString("O"),
+            End = DateTime.Now.ToString("O"),
+            DurationHours = "8"
+        };
+
+        var serviceResponse = new BaseResponse<SleepDto>
+        {
+            Status = ResponseStatus.Success,
+            Data = sleepDto
+        };
+
+        _mockService.Setup(s => s.CreateSleep(It.IsAny<SleepDto>())).ReturnsAsync(serviceResponse);
+
+        // Act
+        var result = await _controller.CreateSleep(sleepDto);
+
+        // Assert
+        var createdResult = result.Result as CreatedAtActionResult;
+        Assert.IsNotNull(createdResult);
+        Assert.AreEqual(201, createdResult.StatusCode);
+        var returnedDto = createdResult.Value as SleepDto;
+        Assert.IsNotNull(returnedDto);
+        Assert.AreEqual(1, returnedDto.Id);
+    }
+
+    [TestMethod]
+    public async Task CreateSleep_ReturnsBadRequest_WhenServiceFails()
+    {
+        // Arrange
+        var sleepDto = new SleepDto { Id = 0 };
+        var serviceResponse = new BaseResponse<SleepDto>
+        {
+            Status = ResponseStatus.Fail,
+            Message = "Sleep record not created.",
+            Data = null
+        };
+
+        _mockService.Setup(s => s.CreateSleep(sleepDto)).ReturnsAsync(serviceResponse);
+
+        // Act
+        var result = await _controller.CreateSleep(sleepDto);
+
+        // Assert
+        var badRequestResult = result.Result as BadRequestObjectResult;
+        Assert.IsNotNull(badRequestResult);
+        Assert.AreEqual(400, badRequestResult.StatusCode);
+        var errorPayload = badRequestResult.Value as string;
+        Assert.AreEqual("Sleep record not created.", errorPayload);
+    }
 }

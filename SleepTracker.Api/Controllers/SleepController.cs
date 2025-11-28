@@ -43,5 +43,18 @@ namespace SleepTracker.Api.Controllers
 
             return Ok(returnedSleepDto);
         }
+
+        [HttpPost]
+        public async Task<ActionResult<SleepDto>> CreateSleep([FromBody] SleepDto createSleepDto)
+        {
+            var responseWithDataDto = await _sleepService.CreateSleep(createSleepDto);
+
+            if (responseWithDataDto.Status == ResponseStatus.Fail)
+            {
+                return BadRequest(responseWithDataDto.Message);
+            }
+
+            return CreatedAtAction(nameof(GetSleepById), new { id = responseWithDataDto.Data.Id }, responseWithDataDto.Data);
+        }
     }
 }
