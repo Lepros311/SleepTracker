@@ -95,4 +95,26 @@ public class SleepServiceTests
         Assert.AreEqual(1, result.Data.Id);
         Assert.AreEqual("8", result.Data.DurationHours);
     }
+
+    [TestMethod]
+    public async Task GetSleepById_ReturnsFail_WhenRepositoryReturnsNull()
+    {
+        // Arrange
+        var repositoryResponse = new BaseResponse<Sleep>
+        {
+            Status = ResponseStatus.Fail,
+            Message = "Sleep record not found",
+            Data = null
+        };
+
+        _mockRepository.Setup(r => r.GetSleepById(99)).ReturnsAsync(repositoryResponse);
+
+        // Act
+        var result = await _service.GetSleepById(99);
+
+        // Assert
+        Assert.AreEqual(ResponseStatus.Fail, result.Status);
+        Assert.AreEqual("Sleep record not found", result.Message);
+        Assert.IsNull(result.Data);
+    }
 }
