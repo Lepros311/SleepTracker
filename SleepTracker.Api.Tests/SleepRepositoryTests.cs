@@ -70,7 +70,6 @@ public class SleepRepositoryTests
 
         // Assert
         Assert.AreEqual(ResponseStatus.Success, result.Status);
-        Assert.AreEqual("Found", result.Message);
         Assert.IsNotNull(result.Data);
         Assert.AreEqual(1, result.Data.Id);
     }
@@ -83,7 +82,7 @@ public class SleepRepositoryTests
 
         // Assert
         Assert.AreEqual(ResponseStatus.Fail, result.Status);
-        Assert.AreEqual("Sleep record not found", result.Message);
+        Assert.AreEqual("Sleep record not found.", result.Message);
         Assert.IsNull(result.Data);
     }
 

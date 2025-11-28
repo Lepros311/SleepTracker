@@ -70,6 +70,27 @@ public class SleepRepository : ISleepRepository
     {
         var response = new BaseResponse<Sleep>();
 
+        try
+        {
+            var sleep = await _dbContext.Sleeps.FirstOrDefaultAsync(s => s.Id == id);
+
+            if (sleep == null)
+            {
+                response.Status = ResponseStatus.Fail;
+                response.Message = "Sleep record not found.";
+            }
+            else
+            {
+                response.Status = ResponseStatus.Success;
+                response.Data = sleep;
+            }
+        }
+        catch (Exception ex)
+        {
+            response.Message = $"Error in SleepRepository {nameof(SleepRepository)}: {ex.Message}";
+            response.Status = ResponseStatus.Fail;
+        }
+
         return response;
     }
 }
