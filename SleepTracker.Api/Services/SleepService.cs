@@ -39,21 +39,33 @@ public class SleepService : ISleepService
 
     public async Task<BaseResponse<SleepDto>> GetSleepById(int id)
     {
-        var responseWithDataDto = new BaseResponse<SleepDto>();
+        var response = await _sleepRepository.GetSleepById(id);
 
-        responseWithDataDto.Status = ResponseStatus.Success;
-        responseWithDataDto.Message = "Found";
-
-        var returnedSleepDto = new SleepDto
+        if (response.Status == ResponseStatus.Fail || response.Data == null)
         {
-            Id = 1,
-            Start = DateTime.Now.AddHours(-8).ToString("O"),
-            End = DateTime.Now.ToString("O"),
-            DurationHours = "8"
+            return new BaseResponse<SleepDto>
+            {
+                Status = ResponseStatus.Fail,
+                Message = response.Message,
+                Data = null
+            };
+        }
+
+        var sleep = response.Data;
+
+        var sleepDto = new SleepDto
+        {
+            Id = sleep.Id,
+            Start = sleep.Start.ToString("O"),
+            End = sleep.End.ToString("O"),
+            DurationHours = (sleep.End - sleep.Start).TotalHours.ToString()
         };
 
-        responseWithDataDto.Data = returnedSleepDto;
-
-        return responseWithDataDto;
+        return new BaseResponse<SleepDto>
+        {
+            Status = ResponseStatus.Success,
+            Message = response.Message,
+            Data = sleepDto
+        };
     }
 }

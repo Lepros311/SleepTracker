@@ -64,4 +64,35 @@ public class SleepServiceTests
         Assert.AreEqual(ResponseStatus.Fail, result.Status);
         Assert.AreEqual("DB error", result.Message);
     }
+
+    [TestMethod]
+    public async Task GetSleepById_ReturnsMappedDto_WhenRepositorySucceeds()
+    {
+        // Arrange
+        var sleep = new Sleep
+        {
+            Id = 1,
+            Start = DateTime.Parse("2025-11-24T22:00:00Z"),
+            End = DateTime.Parse("2025-11-25T06:00:00Z")
+        };
+
+        var repositoryResponse = new BaseResponse<Sleep>
+        {
+            Status = ResponseStatus.Success,
+            Message = "Found",
+            Data = sleep
+        };
+
+        _mockRepository.Setup(r => r.GetSleepById(1)).ReturnsAsync(repositoryResponse);
+
+        // Act
+        var result = await _service.GetSleepById(1);
+
+        // Assert
+        Assert.AreEqual(ResponseStatus.Success, result.Status);
+        Assert.AreEqual("Found", result.Message);
+        Assert.IsNotNull(result.Data);
+        Assert.AreEqual(1, result.Data.Id);
+        Assert.AreEqual("8", result.Data.DurationHours);
+    }
 }
