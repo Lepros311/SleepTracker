@@ -36,4 +36,24 @@ public class SleepService : ISleepService
 
         return responseWithDataDto;
     }
+
+    public async Task<BaseResponse<SleepDto>> GetSleepById(int id)
+    {
+        var responseWithDataDto = new BaseResponse<SleepDto>();
+
+        responseWithDataDto.Status = ResponseStatus.Success;
+        responseWithDataDto.Message = "Found";
+
+        var returnedSleepDto = new SleepDto
+        {
+            Id = 1,
+            Start = DateTime.Now.AddHours(-8).ToString("O"),
+            End = DateTime.Now.ToString("O"),
+            DurationHours = "8"
+        };
+
+        responseWithDataDto.Data = returnedSleepDto;
+
+        return responseWithDataDto;
+    }
 }

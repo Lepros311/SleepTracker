@@ -8,5 +8,5 @@ public class SleepDto
 
     public string End { get; set; }
 
-    public double DurationHours { get; set; }
+    public string DurationHours { get; set; }
 }

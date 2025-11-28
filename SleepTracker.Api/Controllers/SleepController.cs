@@ -28,5 +28,20 @@ namespace SleepTracker.Api.Controllers
 
             return Ok(responseWithDtos);
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<SleepDto>> GetSleepById(int id)
+        {
+            var response = await _sleepService.GetSleepById(id);
+
+            if (response.Status == ResponseStatus.Fail)
+            {
+                return NotFound(response.Message);
+            }
+
+            var returnedSleepDto = response.Data;
+
+            return Ok(returnedSleepDto);
+        }
     }
 }

@@ -6,4 +6,6 @@ namespace SleepTracker.Api.Services;
 public interface ISleepService
 {
     Task<PagedResponse<List<SleepDto>>> GetPagedSleeps(PaginationParams paginationParams);
+
+    Task<BaseResponse<SleepDto>> GetSleepById(int id);
 }

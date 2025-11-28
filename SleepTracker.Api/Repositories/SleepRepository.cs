@@ -65,4 +65,11 @@ public class SleepRepository : ISleepRepository
 
         return response;
     }
+
+    public async Task<BaseResponse<Sleep>> GetSleepById(int id)
+    {
+        var response = new BaseResponse<Sleep>();
+
+        return response;
+    }
 }
