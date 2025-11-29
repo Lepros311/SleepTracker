@@ -8,4 +8,6 @@ public interface ISleepRepository
     public Task<PagedResponse<List<Sleep>>> GetPagedSleeps(PaginationParams paginationParams);
 
     public Task<BaseResponse<Sleep>> GetSleepById(int id);
+
+    public Task<BaseResponse<Sleep>> CreateSleep(Sleep sleep);
 }

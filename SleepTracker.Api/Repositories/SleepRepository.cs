@@ -93,4 +93,13 @@ public class SleepRepository : ISleepRepository
 
         return response;
     }
+
+    public async Task<BaseResponse<Sleep>> CreateSleep(Sleep sleep)
+    {
+        var response = new BaseResponse<Sleep>();
+
+
+
+        return response;
+    }
 }

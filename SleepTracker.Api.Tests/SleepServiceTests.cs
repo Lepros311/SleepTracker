@@ -117,4 +117,65 @@ public class SleepServiceTests
         Assert.AreEqual("Sleep record not found", result.Message);
         Assert.IsNull(result.Data);
     }
+
+    [TestMethod]
+    public async Task CreateSleep_ReturnsSuccess_WhenRepositorySucceeds()
+    {
+        // Arrange
+        var sleep = new Sleep
+        {
+            Id = 1,
+            Start = DateTime.Parse("2025-11-28T22:00:00Z"),
+            End = DateTime.Parse("2025-11-29T06:00:00Z")
+        };
+
+        var repositoryResponse = new BaseResponse<Sleep>
+        {
+            Status = ResponseStatus.Success,
+            Message = "Created",
+            Data = sleep
+        };
+
+        _mockRepository.Setup(r => r.CreateSleep(It.IsAny<Sleep>())).ReturnsAsync(repositoryResponse);
+
+        var sleepDto = new SleepDto
+        {
+            Start = sleep.Start.ToString("O"),
+            End = sleep.End.ToString("O")
+        };
+
+        // Act
+        var result = await _service.CreateSleep(sleepDto);
+
+        // Assert
+        Assert.AreEqual(ResponseStatus.Success, result.Status);
+        Assert.AreEqual("Created", result.Message);
+        Assert.IsNotNull(result.Data);
+        Assert.AreEqual(1, result.Data.Id);
+        Assert.AreEqual("8", result.Data.DurationHours);
+    }
+
+    [TestMethod]
+    public async Task CreateSleep_ReturnsFail_WhenRepositoryFails()
+    {
+        // Arrange
+        var repositoryResponse = new BaseResponse<Sleep>
+        {
+            Status = ResponseStatus.Fail,
+            Message = "Sleep record not created.",
+            Data = null
+        };
+
+        _mockRepository.Setup(r => r.CreateSleep(It.IsAny<Sleep>())).ReturnsAsync(repositoryResponse);
+
+        var sleepDto = new SleepDto { Start = "bad", End = "bad" };
+
+        // Act
+        var result = await _service.CreateSleep(sleepDto);
+
+        // Assert
+        Assert.AreEqual(ResponseStatus.Fail, result.Status);
+        Assert.AreEqual("Sleep record not created.", result.Message);
+        Assert.IsNull(result.Data);
+    }
 }
