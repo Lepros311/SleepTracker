@@ -1,6 +1,6 @@
 ﻿namespace SleepTracker.Api.Models;
 
-public class SleepDto
+public class SleepReadDto
 {
     public int Id { get; set; }
 

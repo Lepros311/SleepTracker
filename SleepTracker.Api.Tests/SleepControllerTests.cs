@@ -25,7 +25,7 @@ public class SleepControllerTests
     {
         // Arrange
         var paginationParams = new PaginationParams { Page = 1, PageSize = 10 };
-        var response = PagedResponse<List<SleepDto>>.Success(new List<SleepDto> { new SleepDto { Id = 1, DurationHours = "8" } }, 1, 10, 1);
+        var response = PagedResponse<List<SleepReadDto>>.Success(new List<SleepReadDto> { new SleepReadDto { Id = 1, DurationHours = "8" } }, 1, 10, 1);
 
         _mockService.Setup(s => s.GetPagedSleeps(paginationParams)).ReturnsAsync(response);
 
@@ -44,7 +44,7 @@ public class SleepControllerTests
     {
         // Arrange
         var paginationParams = new PaginationParams { Page = 1, PageSize = 10 };
-        var response = PagedResponse<List<SleepDto>>.Fail("Something went wrong");
+        var response = PagedResponse<List<SleepReadDto>>.Fail("Something went wrong");
 
         _mockService.Setup(s => s.GetPagedSleeps(paginationParams)).ReturnsAsync(response);
 
@@ -62,7 +62,7 @@ public class SleepControllerTests
     public async Task GetSleepById_ReturnsOk_WhenServiceSucceeds()
     {
         // Arrange
-        var sleepDto = new SleepDto
+        var sleepDto = new SleepReadDto
         {
             Id = 1,
             Start = DateTime.Now.AddHours(-8).ToString("O"),
@@ -70,7 +70,7 @@ public class SleepControllerTests
             DurationHours = "8"
         };
 
-        var serviceResponse = new BaseResponse<SleepDto>
+        var serviceResponse = new BaseResponse<SleepReadDto>
         {
             Status = ResponseStatus.Success,
             Message = "Found",
@@ -86,7 +86,7 @@ public class SleepControllerTests
         var okResult = result.Result as OkObjectResult;
         Assert.IsNotNull(okResult);
         Assert.AreEqual(200, okResult.StatusCode);
-        var returnedSleepDto = okResult.Value as SleepDto;
+        var returnedSleepDto = okResult.Value as SleepReadDto;
         Assert.IsNotNull(returnedSleepDto);
         Assert.AreEqual(1, returnedSleepDto.Id);
         Assert.AreEqual("8", returnedSleepDto.DurationHours);
@@ -96,7 +96,7 @@ public class SleepControllerTests
     public async Task GetSleepById_ReturnsNotFound_WhenServiceFails()
     {
         // Arrange
-        var serviceResponse = new BaseResponse<SleepDto>
+        var serviceResponse = new BaseResponse<SleepReadDto>
         {
             Status = ResponseStatus.Fail,
             Message = "Sleep record not found",
@@ -119,30 +119,36 @@ public class SleepControllerTests
     public async Task CreateSleep_ReturnsCreated_WhenServiceSucceeds()
     {
         // Arrange
-        var sleepDto = new SleepDto
+        var sleepCreateDto = new SleepCreateDto
         {
-            Id = 1,
             Start = DateTime.Now.AddHours(-8).ToString("O"),
             End = DateTime.Now.ToString("O"),
+        };
+
+        var sleepReadDto = new SleepReadDto
+        {
+            Id = 1,
+            Start = sleepCreateDto.Start,
+            End = sleepCreateDto.End,
             DurationHours = "8"
         };
 
-        var serviceResponse = new BaseResponse<SleepDto>
+        var serviceResponse = new BaseResponse<SleepReadDto>
         {
             Status = ResponseStatus.Success,
-            Data = sleepDto
+            Data = sleepReadDto
         };
 
-        _mockService.Setup(s => s.CreateSleep(It.IsAny<SleepDto>())).ReturnsAsync(serviceResponse);
+        _mockService.Setup(s => s.CreateSleep(It.IsAny<SleepCreateDto>())).ReturnsAsync(serviceResponse);
 
         // Act
-        var result = await _controller.CreateSleep(sleepDto);
+        var result = await _controller.CreateSleep(sleepCreateDto);
 
         // Assert
         var createdResult = result.Result as CreatedAtActionResult;
         Assert.IsNotNull(createdResult);
         Assert.AreEqual(201, createdResult.StatusCode);
-        var returnedDto = createdResult.Value as SleepDto;
+        var returnedDto = createdResult.Value as SleepReadDto;
         Assert.IsNotNull(returnedDto);
         Assert.AreEqual(1, returnedDto.Id);
     }
@@ -151,18 +157,23 @@ public class SleepControllerTests
     public async Task CreateSleep_ReturnsBadRequest_WhenServiceFails()
     {
         // Arrange
-        var sleepDto = new SleepDto { Id = 0 };
-        var serviceResponse = new BaseResponse<SleepDto>
+        var sleepCreateDto = new SleepCreateDto
+        {
+            Start = DateTime.Now.ToString("O"),
+            End = DateTime.Now.AddHours(8).ToString("O")
+        };
+
+        var serviceResponse = new BaseResponse<SleepReadDto>
         {
             Status = ResponseStatus.Fail,
             Message = "Sleep record not created.",
             Data = null
         };
 
-        _mockService.Setup(s => s.CreateSleep(sleepDto)).ReturnsAsync(serviceResponse);
+        _mockService.Setup(s => s.CreateSleep(sleepCreateDto)).ReturnsAsync(serviceResponse);
 
         // Act
-        var result = await _controller.CreateSleep(sleepDto);
+        var result = await _controller.CreateSleep(sleepCreateDto);
 
         // Assert
         var badRequestResult = result.Result as BadRequestObjectResult;

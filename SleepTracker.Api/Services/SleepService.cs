@@ -1,6 +1,7 @@
 ﻿using SleepTracker.Api.Models;
 using SleepTracker.Api.Repositories;
 using SleepTracker.Api.Responses;
+using System.Globalization;
 
 namespace SleepTracker.Api.Services;
 
@@ -13,11 +14,11 @@ public class SleepService : ISleepService
         _sleepRepository = sleepRepository;
     }
 
-    public async Task<PagedResponse<List<SleepDto>>> GetPagedSleeps(PaginationParams paginationParams)
+    public async Task<PagedResponse<List<SleepReadDto>>> GetPagedSleeps(PaginationParams paginationParams)
     {
         var response = await _sleepRepository.GetPagedSleeps(paginationParams);
 
-        var responseWithDataDto = new PagedResponse<List<SleepDto>>(data: new List<SleepDto>(),
+        var responseWithDataDto = new PagedResponse<List<SleepReadDto>>(data: new List<SleepReadDto>(),
                                                                     pageNumber: paginationParams.Page,
                                                                     pageSize: paginationParams.PageSize,
                                                                     totalRecords: response.TotalRecords);
@@ -29,7 +30,7 @@ public class SleepService : ISleepService
             return responseWithDataDto;
         }
 
-        responseWithDataDto.Data = response.Data.Select(s => new SleepDto
+        responseWithDataDto.Data = response.Data.Select(s => new SleepReadDto
         {
             Id = s.Id
         }).ToList();
@@ -37,13 +38,13 @@ public class SleepService : ISleepService
         return responseWithDataDto;
     }
 
-    public async Task<BaseResponse<SleepDto>> GetSleepById(int id)
+    public async Task<BaseResponse<SleepReadDto>> GetSleepById(int id)
     {
         var response = await _sleepRepository.GetSleepById(id);
 
         if (response.Status == ResponseStatus.Fail || response.Data == null)
         {
-            return new BaseResponse<SleepDto>
+            return new BaseResponse<SleepReadDto>
             {
                 Status = ResponseStatus.Fail,
                 Message = response.Message,
@@ -53,7 +54,7 @@ public class SleepService : ISleepService
 
         var sleep = response.Data;
 
-        var sleepDto = new SleepDto
+        var sleepDto = new SleepReadDto
         {
             Id = sleep.Id,
             Start = sleep.Start.ToString("O"),
@@ -61,11 +62,48 @@ public class SleepService : ISleepService
             DurationHours = (sleep.End - sleep.Start).TotalHours.ToString()
         };
 
-        return new BaseResponse<SleepDto>
+        return new BaseResponse<SleepReadDto>
         {
             Status = ResponseStatus.Success,
             Message = response.Message,
             Data = sleepDto
         };
+    }
+
+    public async Task<BaseResponse<SleepReadDto>> CreateSleep(SleepCreateDto sleepCreateDto)
+    {
+        var response = new BaseResponse<Sleep>();
+        var responseWithDataDto = new BaseResponse<SleepReadDto>();
+
+        var newSleep = new Sleep
+        {
+            Start = DateTime.Parse(sleepCreateDto.Start),
+            End = DateTime.Parse(sleepCreateDto.End)
+        };
+
+        response = await _sleepRepository.CreateSleep(newSleep);
+
+        if (response.Status == ResponseStatus.Fail)
+        {
+            responseWithDataDto.Status = ResponseStatus.Fail;
+            responseWithDataDto.Message = response.Message;
+            return responseWithDataDto;
+        }
+        else
+        {
+            responseWithDataDto.Status = ResponseStatus.Success;
+
+            var newSleepDto = new SleepReadDto
+            {
+                Id = response.Data.Id,
+                Start = response.Data.Start.ToString("O"),
+                End = response.Data.End.ToString("O"),
+                DurationHours = (response.Data.End - response.Data.Start).TotalHours.ToString()
+            };
+
+            responseWithDataDto.Data = newSleepDto;
+        }
+
+        return responseWithDataDto;
     }
 }

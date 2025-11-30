@@ -17,7 +17,7 @@ namespace SleepTracker.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedResponse<List<SleepDto>>>> GetPagedSleeps([FromQuery] PaginationParams paginationParams)
+        public async Task<ActionResult<PagedResponse<List<SleepReadDto>>>> GetPagedSleeps([FromQuery] PaginationParams paginationParams)
         {
             var responseWithDtos = await _sleepService.GetPagedSleeps(paginationParams);
 
@@ -30,7 +30,7 @@ namespace SleepTracker.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<SleepDto>> GetSleepById(int id)
+        public async Task<ActionResult<SleepReadDto>> GetSleepById(int id)
         {
             var response = await _sleepService.GetSleepById(id);
 
@@ -45,9 +45,9 @@ namespace SleepTracker.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<SleepDto>> CreateSleep([FromBody] SleepDto createSleepDto)
+        public async Task<ActionResult<SleepReadDto>> CreateSleep([FromBody] SleepCreateDto sleepCreateDto)
         {
-            var responseWithDataDto = await _sleepService.CreateSleep(createSleepDto);
+            var responseWithDataDto = await _sleepService.CreateSleep(sleepCreateDto);
 
             if (responseWithDataDto.Status == ResponseStatus.Fail)
             {

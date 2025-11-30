@@ -132,24 +132,22 @@ public class SleepServiceTests
         var repositoryResponse = new BaseResponse<Sleep>
         {
             Status = ResponseStatus.Success,
-            Message = "Created",
             Data = sleep
         };
 
         _mockRepository.Setup(r => r.CreateSleep(It.IsAny<Sleep>())).ReturnsAsync(repositoryResponse);
 
-        var sleepDto = new SleepDto
+        var sleepCreateDto = new SleepCreateDto
         {
             Start = sleep.Start.ToString("O"),
             End = sleep.End.ToString("O")
         };
 
         // Act
-        var result = await _service.CreateSleep(sleepDto);
+        var result = await _service.CreateSleep(sleepCreateDto);
 
         // Assert
         Assert.AreEqual(ResponseStatus.Success, result.Status);
-        Assert.AreEqual("Created", result.Message);
         Assert.IsNotNull(result.Data);
         Assert.AreEqual(1, result.Data.Id);
         Assert.AreEqual("8", result.Data.DurationHours);
@@ -159,6 +157,12 @@ public class SleepServiceTests
     public async Task CreateSleep_ReturnsFail_WhenRepositoryFails()
     {
         // Arrange
+        var sleepCreateDto = new SleepCreateDto
+        {
+            Start = DateTime.Now.AddHours(-8).ToString("O"),
+            End = DateTime.Now.ToString("O")
+        };
+
         var repositoryResponse = new BaseResponse<Sleep>
         {
             Status = ResponseStatus.Fail,
@@ -168,10 +172,8 @@ public class SleepServiceTests
 
         _mockRepository.Setup(r => r.CreateSleep(It.IsAny<Sleep>())).ReturnsAsync(repositoryResponse);
 
-        var sleepDto = new SleepDto { Start = "bad", End = "bad" };
-
         // Act
-        var result = await _service.CreateSleep(sleepDto);
+        var result = await _service.CreateSleep(sleepCreateDto);
 
         // Assert
         Assert.AreEqual(ResponseStatus.Fail, result.Status);
