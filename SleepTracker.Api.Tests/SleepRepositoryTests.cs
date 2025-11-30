@@ -107,7 +107,7 @@ public class SleepRepositoryTests
         var sleep = new Sleep
         {
             Start = DateTime.Parse("2025-11-28T22:00:00Z"),
-            End = DateTime.Parse("2025-11-29T:06:00:00Z")
+            End = DateTime.Parse("2025-11-29T06:00:00Z")
         };
 
         // Act

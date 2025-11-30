@@ -98,7 +98,28 @@ public class SleepRepository : ISleepRepository
     {
         var response = new BaseResponse<Sleep>();
 
+        try
+        {
+            _dbContext.Sleeps.Add(sleep);
 
+            await _dbContext.SaveChangesAsync();
+
+            if (sleep == null)
+            {
+                response.Status = ResponseStatus.Fail;
+                response.Message = "Sleep record not created.";
+            }
+            else
+            {
+                response.Status = ResponseStatus.Success;
+                response.Data = sleep;
+            }
+        }
+        catch (Exception ex)
+        {
+            response.Message = $"Error in SleepRepository {nameof(CreateSleep)}: {ex.Message}";
+            response.Status = ResponseStatus.Fail;
+        }
 
         return response;
     }
