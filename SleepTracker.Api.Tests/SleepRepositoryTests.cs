@@ -59,7 +59,7 @@ public class SleepRepositoryTests
 
         // Assert
         Assert.AreEqual(ResponseStatus.Fail, result.Status);
-        Assert.IsTrue(result.Message.Contains("Object reference"));
+        Assert.Contains("Object reference", result.Message);
     }
 
     [TestMethod]
@@ -97,6 +97,47 @@ public class SleepRepositoryTests
 
         // Assert
         Assert.AreEqual(ResponseStatus.Fail, result.Status);
+        Assert.Contains("Object reference", result.Message);
+    }
+
+    [TestMethod]
+    public async Task CreateSleep_ReturnsSuccess_WhenEntityIsValid()
+    {
+        // Arrange
+        var sleep = new Sleep
+        {
+            Start = DateTime.Parse("2025-11-28T22:00:00Z"),
+            End = DateTime.Parse("2025-11-29T:06:00:00Z")
+        };
+
+        // Act
+        var result = await _repository.CreateSleep(sleep);
+
+        // Assert
+        Assert.AreEqual(ResponseStatus.Success, result.Status);
+        Assert.IsNotNull(result.Data);
+        Assert.IsGreaterThan(0, result.Data.Id);
+        Assert.AreEqual(sleep.Start, result.Data.Start);
+        Assert.AreEqual(sleep.End, result.Data.End);
+    }
+
+    [TestMethod]
+    public async Task CreateSleep_ReturnsFail_WhenDbContextThrows()
+    {
+        // Arrange
+        var badRepository = new SleepRepository(null);
+        var sleep = new Sleep
+        {
+            Start = DateTime.Now,
+            End = DateTime.Now.AddHours(8)
+        };
+
+        // Act
+        var result = await badRepository.CreateSleep(sleep);
+
+        // Assert
+        Assert.AreEqual(ResponseStatus.Fail, result.Status);
+        Assert.IsNull(result.Data);
         Assert.Contains("Object reference", result.Message);
     }
 }
