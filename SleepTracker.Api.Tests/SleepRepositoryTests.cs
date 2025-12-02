@@ -203,4 +203,43 @@ public class SleepRepositoryTests
         Assert.IsNull(result.Data);
         Assert.Contains("Error in SleepRepository UpdateSleep", result.Message);
     }
+
+    [TestMethod]
+    public async Task DeleteSleep_ReturnsSuccess_WhenEntityExists()
+    {
+        // Act
+        var result = await _repository.DeleteSleep(1);
+
+        // Assert
+        Assert.AreEqual(ResponseStatus.Success, result.Status);
+        var sleep = await _dbContext.Sleeps.FindAsync(1);
+        Assert.IsNotNull(sleep);
+        Assert.IsTrue(sleep.IsDeleted);
+    }
+
+    [TestMethod]
+    public async Task DeleteSleep_ReturnsFail_WhenEntityDoesNotExist()
+    {
+        // Act
+        var result = await _repository.DeleteSleep(99);
+
+        // Assert
+        Assert.AreEqual(ResponseStatus.Fail, result.Status);
+        Assert.AreEqual("Sleep record not found.", result.Message);
+        Assert.IsNull(result.Data);
+    }
+
+    [TestMethod]
+    public async Task DeleteSleep_ReturnsFail_WhenDbContextThrows()
+    {
+        // Arrange
+        var badRepository = new SleepRepository(null!);
+
+        // Act
+        var result = await badRepository.DeleteSleep(1);
+
+        // Assert
+        Assert.AreEqual(ResponseStatus.Fail, result.Status);
+        Assert.Contains("Error in SleepRepository DeleteSleep", result.Message);
+    }
 }

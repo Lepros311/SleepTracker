@@ -165,6 +165,38 @@ public class SleepRepository : ISleepRepository
     {
         var response = new BaseResponse<Sleep>();
 
+        try
+        {
+            var existingSleep = await _dbContext.Sleeps.FindAsync(id);
+            if (existingSleep == null)
+            {
+                response.Status = ResponseStatus.Fail;
+                response.Message = "Sleep record not found.";
+                return response;
+            }
+
+            existingSleep.IsDeleted = true;
+            _dbContext.Sleeps.Update(existingSleep);
+            var affectedRows = await _dbContext.SaveChangesAsync();
+
+            if (affectedRows == 0)
+            {
+                response.Status = ResponseStatus.Fail;
+                response.Message = "Deletion failed.";
+            }
+            else
+            {
+                response.Status = ResponseStatus.Success;
+                response.Message = "Sleep record deleted.";
+                response.Data = existingSleep;
+            }
+        }
+        catch (Exception ex)
+        {
+            response.Message = $"Error in SleepRepository {nameof(DeleteSleep)}: {ex.Message}";
+            response.Status = ResponseStatus.Fail;
+        }
+
         return response;
     }
 }
