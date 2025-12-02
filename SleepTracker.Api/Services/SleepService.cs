@@ -106,4 +106,13 @@ public class SleepService : ISleepService
 
         return responseWithDataDto;
     }
+
+    public async Task<BaseResponse<SleepReadDto>> UpdateSleep(int id, SleepUpdateDto sleepUpdateDto)
+    {
+        var response = new BaseResponse<SleepReadDto>();
+
+
+
+        return response;
+    }
 }

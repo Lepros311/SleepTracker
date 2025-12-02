@@ -182,4 +182,69 @@ public class SleepControllerTests
         var errorPayload = badRequestResult.Value as string;
         Assert.AreEqual("Sleep record not created.", errorPayload);
     }
+
+    [TestMethod]
+    public async Task UpdateSleep_ReturnsOk_WhenServiceSucceeds()
+    {
+        // Arrange
+        var sleepUpdateDto = new SleepUpdateDto
+        {
+            Start = DateTime.Now.AddHours(-7).ToString("O"),
+            End = DateTime.Now.ToString("O")
+        };
+
+        var updatedSleepDto = new SleepReadDto
+        {
+            Id = 1,
+            Start = sleepUpdateDto.Start,
+            End = sleepUpdateDto.End,
+            DurationHours = "7"
+        };
+
+        var serviceResponse = new BaseResponse<SleepReadDto>
+        {
+            Status = ResponseStatus.Success,
+            Data = updatedSleepDto
+        };
+
+        _mockService.Setup(s => s.UpdateSleep(1, sleepUpdateDto)).ReturnsAsync(serviceResponse);
+
+        // Act 
+        var result = await _controller.UpdateSleep(1, sleepUpdateDto);
+
+        // Assert
+        var noContentResult = result.Result as NoContentResult;
+        Assert.IsNotNull(noContentResult);
+        Assert.AreEqual(204, noContentResult.StatusCode);
+    }
+
+    [TestMethod]
+    public async Task UpdateSleep_ReturnsBadRequest_WhenServiceFails()
+    {
+        // Arrange
+        var sleepUpdateDto = new SleepUpdateDto
+        {
+            Start = DateTime.Now.AddHours(-7).ToString("O"),
+            End = DateTime.Now.ToString("O")
+        };
+
+        var serviceResponse = new BaseResponse<SleepReadDto>
+        {
+            Status = ResponseStatus.Fail,
+            Message = "Sleep record not updated.",
+            Data = null
+        };
+
+        _mockService.Setup(s => s.UpdateSleep(1, sleepUpdateDto)).ReturnsAsync(serviceResponse);
+
+        // Act
+        var result = await _controller.UpdateSleep(1, sleepUpdateDto);
+
+        // Assert
+        var badRequestResult = result.Result as BadRequestObjectResult;
+        Assert.IsNotNull(badRequestResult);
+        Assert.AreEqual(400, badRequestResult.StatusCode);
+        var errorPayload = badRequestResult.Value as string;
+        Assert.AreEqual("Sleep record not updated.", errorPayload);
+    }
 }

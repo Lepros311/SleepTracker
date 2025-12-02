@@ -10,4 +10,6 @@ public interface ISleepService
     Task<BaseResponse<SleepReadDto>> GetSleepById(int id);
 
     Task<BaseResponse<SleepReadDto>> CreateSleep(SleepCreateDto sleepCreateDto);
+
+    Task<BaseResponse<SleepReadDto>> UpdateSleep(int id, SleepUpdateDto sleepUpdateDto);
 }
