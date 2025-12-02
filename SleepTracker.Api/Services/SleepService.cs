@@ -109,10 +109,49 @@ public class SleepService : ISleepService
 
     public async Task<BaseResponse<SleepReadDto>> UpdateSleep(int id, SleepUpdateDto sleepUpdateDto)
     {
-        var response = new BaseResponse<SleepReadDto>();
+        if (!DateTime.TryParse(sleepUpdateDto.Start, out var start) || !DateTime.TryParse(sleepUpdateDto.End, out var end))
+        {
+            return new BaseResponse<SleepReadDto>
+            {
+                Status = ResponseStatus.Fail,
+                Message = "Invalid date format.",
+                Data = null
+            };
+        }
 
+        var updatedSleep = new Sleep
+        {
+            Id = id,
+            Start = start,
+            End = end
+        };
 
+        var response = await _sleepRepository.UpdateSleep(updatedSleep);
 
-        return response;
+        if (response.Status == ResponseStatus.Fail || response.Data == null)
+        {
+            return new BaseResponse<SleepReadDto>
+            {
+                Status = ResponseStatus.Fail,
+                Message = response.Message ?? "Sleep record not updated.",
+                Data = null
+            };
+        }
+
+        var updatedSleepDto = new SleepReadDto
+        {
+            Id = response.Data.Id,
+            Start = response.Data.Start.ToString("O"),
+            End = response.Data.End.ToString("O"),
+            DurationHours = (response.Data.End - response.Data.Start).TotalHours.ToString("0")
+        };
+
+        var responseWithDataDto = new BaseResponse<SleepReadDto>
+        {
+            Status = ResponseStatus.Success,
+            Data = updatedSleepDto
+        };
+
+        return responseWithDataDto;
     }
 }

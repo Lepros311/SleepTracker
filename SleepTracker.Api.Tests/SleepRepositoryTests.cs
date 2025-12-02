@@ -140,4 +140,67 @@ public class SleepRepositoryTests
         Assert.IsNull(result.Data);
         Assert.Contains("Object reference", result.Message);
     }
+
+    [TestMethod]
+    public async Task UpdateSleep_ReturnsSuccess_WhenEntityIsUpdated()
+    {
+        // Arrange
+        var updatedSleep = new Sleep
+        {
+            Id = 1,
+            Start = DateTime.Now.AddHours(-7),
+            End = DateTime.Now
+        };
+
+        // Act
+        var result = await _repository.UpdateSleep(updatedSleep);
+
+        // Assert
+        Assert.AreEqual(ResponseStatus.Success, result.Status);
+        Assert.IsNotNull(result.Data);
+        Assert.AreEqual(updatedSleep.Id, result.Data.Id);
+        Assert.AreEqual(updatedSleep.Start, result.Data.Start);
+        Assert.AreEqual(updatedSleep.End, result.Data.End);
+    }
+
+    [TestMethod]
+    public async Task UpdateSleep_ReturnsFail_WhenEntityDoesNotExist()
+    {
+        // Arrange
+        var updatedSleep = new Sleep
+        {
+            Id = 99,
+            Start = DateTime.Now.AddHours(-7),
+            End = DateTime.Now
+        };
+
+        // Act
+        var result = await _repository.UpdateSleep(updatedSleep);
+
+        // Assert
+        Assert.AreEqual(ResponseStatus.Fail, result.Status);
+        Assert.AreEqual("No sleep record with that ID found.", result.Message);
+        Assert.IsNull(result.Data);
+    }
+
+    [TestMethod]
+    public async Task UpdateSleep_ReturnsFail_WhenDbContextThrows()
+    {
+        // Arrange
+        var badRepository = new SleepRepository(null!);
+        var updatedSleep = new Sleep
+        {
+            Id = 1,
+            Start = DateTime.Now.AddHours(-7),
+            End = DateTime.Now
+        };
+
+        // Act
+        var result = await badRepository.UpdateSleep(updatedSleep);
+
+        // Assert
+        Assert.AreEqual(ResponseStatus.Fail, result.Status);
+        Assert.IsNull(result.Data);
+        Assert.Contains("Error in SleepRepository UpdateSleep", result.Message);
+    }
 }

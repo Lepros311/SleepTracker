@@ -9,5 +9,7 @@ public interface ISleepRepository
 
     public Task<BaseResponse<Sleep>> GetSleepById(int id);
 
-    public Task<BaseResponse<Sleep>> CreateSleep(Sleep sleep);
+    public Task<BaseResponse<Sleep>> CreateSleep(Sleep newSleep);
+
+    public Task<BaseResponse<Sleep>> UpdateSleep(Sleep updatedSleep);
 }

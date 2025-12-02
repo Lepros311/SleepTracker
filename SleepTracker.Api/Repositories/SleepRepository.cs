@@ -94,17 +94,17 @@ public class SleepRepository : ISleepRepository
         return response;
     }
 
-    public async Task<BaseResponse<Sleep>> CreateSleep(Sleep sleep)
+    public async Task<BaseResponse<Sleep>> CreateSleep(Sleep newSleep)
     {
         var response = new BaseResponse<Sleep>();
 
         try
         {
-            _dbContext.Sleeps.Add(sleep);
+            _dbContext.Sleeps.Add(newSleep);
 
             await _dbContext.SaveChangesAsync();
 
-            if (sleep == null)
+            if (newSleep == null)
             {
                 response.Status = ResponseStatus.Fail;
                 response.Message = "Sleep record not created.";
@@ -112,12 +112,49 @@ public class SleepRepository : ISleepRepository
             else
             {
                 response.Status = ResponseStatus.Success;
-                response.Data = sleep;
+                response.Data = newSleep;
             }
         }
         catch (Exception ex)
         {
             response.Message = $"Error in SleepRepository {nameof(CreateSleep)}: {ex.Message}";
+            response.Status = ResponseStatus.Fail;
+        }
+
+        return response;
+    }
+
+    public async Task<BaseResponse<Sleep>> UpdateSleep(Sleep updatedSleep)
+    {
+        var response = new BaseResponse<Sleep>();
+
+        try
+        {
+            var existingSleep = await _dbContext.Sleeps.FindAsync(updatedSleep.Id);
+            if (existingSleep == null)
+            {
+                response.Status = ResponseStatus.Fail;
+                response.Message = "No sleep record with that ID found.";
+                return response;
+            }
+
+            _dbContext.Entry(existingSleep).CurrentValues.SetValues(updatedSleep);
+            var affectedRows = await _dbContext.SaveChangesAsync();
+
+            if (affectedRows == 0)
+            {
+                response.Status = ResponseStatus.Fail;
+                response.Message = "No changes were saved.";
+            }
+            else
+            {
+                response.Status = ResponseStatus.Success;
+                response.Data = updatedSleep;
+            }
+        }
+        catch (Exception ex)
+        {
+            response.Message = $"Error in SleepRepository {nameof(UpdateSleep)}: {ex.Message}";
             response.Status = ResponseStatus.Fail;
         }
 

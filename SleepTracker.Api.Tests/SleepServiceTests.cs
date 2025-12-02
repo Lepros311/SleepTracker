@@ -180,4 +180,68 @@ public class SleepServiceTests
         Assert.AreEqual("Sleep record not created.", result.Message);
         Assert.IsNull(result.Data);
     }
+
+    [TestMethod]
+    public async Task UpdateSleep_ReturnsSuccess_WhenRepositorySucceeds()
+    {
+        // Arrange
+        var sleepUpdateDto = new SleepUpdateDto
+        {
+            Start = DateTime.Now.AddHours(-7).ToString("O"),
+            End = DateTime.Now.ToString("O")
+        };
+
+        var updatedSleep = new Sleep
+        {
+            Id = 1,
+            Start = DateTime.Parse(sleepUpdateDto.Start),
+            End = DateTime.Parse(sleepUpdateDto.End)
+        };
+
+        var respositoryResponse = new BaseResponse<Sleep>
+        {
+            Status = ResponseStatus.Success,
+            Data = updatedSleep
+        };
+
+        _mockRepository.Setup(r => r.UpdateSleep(It.IsAny<Sleep>())).ReturnsAsync(respositoryResponse);
+
+        // Act
+        var result = await _service.UpdateSleep(1, sleepUpdateDto);
+
+        // Assert
+        Assert.AreEqual(ResponseStatus.Success, result.Status);
+        Assert.IsNotNull(result.Data);
+        Assert.AreEqual(1, result.Data.Id);
+        Assert.AreEqual(sleepUpdateDto.Start, result.Data.Start);
+        Assert.AreEqual(sleepUpdateDto.End, result.Data.End);
+    }
+
+    [TestMethod]
+    public async Task UpdateSleep_ReturnsFail_WhenRepositoryFails()
+    {
+        // Arrange
+        var sleepUpdateDto = new SleepUpdateDto
+        {
+            Start = DateTime.Now.AddHours(-7).ToString("O"),
+            End = DateTime.Now.ToString("O")
+        };
+
+        var repositoryResponse = new BaseResponse<Sleep>
+        {
+            Status = ResponseStatus.Fail,
+            Message = "No changes were saved.",
+            Data = null
+        };
+
+        _mockRepository.Setup(r => r.UpdateSleep(It.IsAny<Sleep>())).ReturnsAsync(repositoryResponse);
+
+        // Act
+        var result = await _service.UpdateSleep(1, sleepUpdateDto);
+
+        // Assert
+        Assert.AreEqual(ResponseStatus.Fail, result.Status);
+        Assert.IsNull(result.Data);
+        Assert.AreEqual("No changes were saved.", result.Message);
+    }
 }
