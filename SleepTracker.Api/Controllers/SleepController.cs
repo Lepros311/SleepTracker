@@ -69,5 +69,22 @@ namespace SleepTracker.Api.Controllers
 
             return NoContent();
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteSleep(int id)
+        {
+            var response = await _sleepService.DeleteSleep(id);
+
+            if (response.Message == "Sleep record not found.")
+            {
+                return NotFound(response.Message);
+            }
+            else if (response.Status == ResponseStatus.Fail)
+            {
+                return BadRequest(response.Message);
+            }
+
+            return NoContent();
+        }
     }
 }

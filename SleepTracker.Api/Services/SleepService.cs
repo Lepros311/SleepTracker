@@ -154,4 +154,20 @@ public class SleepService : ISleepService
 
         return responseWithDataDto;
     }
+
+    public async Task<BaseResponse<SleepReadDto>> DeleteSleep(int id)
+    {
+        //return await Task.FromResult(new BaseResponse<SleepReadDto>
+        //{
+        //    Status = ResponseStatus.Fail,
+        //    Message = "DeleteSleep not yet implemented.",
+        //    Data = null
+        //});
+
+        return await Task.FromResult(new BaseResponse<SleepReadDto>
+        {
+            Status = ResponseStatus.Success,
+            Data = null
+        });
+    }
 }

@@ -247,4 +247,46 @@ public class SleepControllerTests
         var errorPayload = badRequestResult.Value as string;
         Assert.AreEqual("Sleep record not updated.", errorPayload);
     }
+
+    [TestMethod]
+    public async Task DeleteSleep_ReturnsNoContent_WhenServiceReturnsSuccess()
+    {
+        // Arrange
+        var serviceResponse = new BaseResponse<SleepReadDto>
+        {
+            Status = ResponseStatus.Success
+        };
+
+        _mockService.Setup(s => s.DeleteSleep(1)).ReturnsAsync(serviceResponse);
+
+        // Act
+        var result = await _controller.DeleteSleep(1);
+
+        // Assert
+        var noContentResult = result as NoContentResult;
+        Assert.IsNotNull(noContentResult);
+        Assert.AreEqual(204, noContentResult.StatusCode);
+    }
+
+    [TestMethod]
+    public async Task DeleteSleep_ReturnsBadRequest_WhenServiceReturnsFail()
+    {
+        // Arrange
+        var serviceResponse = new BaseResponse<SleepReadDto>
+        {
+            Status = ResponseStatus.Fail,
+            Message = "Sleep record not found."
+        };
+
+        _mockService.Setup(s => s.DeleteSleep(99)).ReturnsAsync(serviceResponse);
+
+        // Act
+        var result = await _controller.DeleteSleep(99);
+
+        // Assert
+        var notFoundResult = result as NotFoundObjectResult;
+        Assert.IsNotNull(notFoundResult);
+        Assert.AreEqual(404, notFoundResult.StatusCode);
+        Assert.AreEqual("Sleep record not found.", notFoundResult.Value);
+    }
 }
