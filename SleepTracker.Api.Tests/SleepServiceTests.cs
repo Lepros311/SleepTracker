@@ -3,6 +3,7 @@ using SleepTracker.Api.Models;
 using SleepTracker.Api.Repositories;
 using SleepTracker.Api.Responses;
 using SleepTracker.Api.Services;
+using System.Runtime.InteropServices;
 
 namespace SleepTracker.Api.Tests;
 
@@ -243,5 +244,49 @@ public class SleepServiceTests
         Assert.AreEqual(ResponseStatus.Fail, result.Status);
         Assert.IsNull(result.Data);
         Assert.AreEqual("No changes were saved.", result.Message);
+    }
+
+    [TestMethod]
+    public async Task DeleteSleep_ReturnsSuccess_WhenRepositorySucceeds()
+    {
+        // Arrange
+        var repositoryResponse = new BaseResponse<Sleep>
+        {
+            Status = ResponseStatus.Success
+        };
+
+        _mockRepository.Setup(r => r.DeleteSleep(1)).ReturnsAsync(repositoryResponse);
+
+        var service = new SleepService(_mockRepository.Object);
+
+        // Act
+        var result = await service.DeleteSleep(1);
+
+        // Assert
+        Assert.AreEqual(ResponseStatus.Success, result.Status);
+        Assert.IsNull(result.Data);
+    }
+
+    [TestMethod]
+    public async Task DeleteSleep_ReturnsFail_WhenRepositoryReturnsNotFound()
+    {
+        // Arrange
+        var repositoryResponse = new BaseResponse<Sleep>
+        {
+            Status = ResponseStatus.Fail,
+            Message = "Sleep record not found."
+        };
+
+        _mockRepository.Setup(r => r.DeleteSleep(99)).ReturnsAsync(repositoryResponse);
+
+        var service = new SleepService(_mockRepository.Object);
+
+        // Act
+        var result = await service.DeleteSleep(99);
+
+        // Assert
+        Assert.AreEqual(ResponseStatus.Fail, result.Status);
+        Assert.AreEqual("Sleep record not found.", result.Message);
+        Assert.IsNull(result.Data);
     }
 }

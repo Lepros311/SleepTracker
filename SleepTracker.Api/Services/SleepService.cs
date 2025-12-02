@@ -157,17 +157,22 @@ public class SleepService : ISleepService
 
     public async Task<BaseResponse<SleepReadDto>> DeleteSleep(int id)
     {
-        //return await Task.FromResult(new BaseResponse<SleepReadDto>
-        //{
-        //    Status = ResponseStatus.Fail,
-        //    Message = "DeleteSleep not yet implemented.",
-        //    Data = null
-        //});
+        var response = await _sleepRepository.DeleteSleep(id);
 
-        return await Task.FromResult(new BaseResponse<SleepReadDto>
+        if (response.Status == ResponseStatus.Fail)
+        {
+            return new BaseResponse<SleepReadDto>
+            {
+                Status = ResponseStatus.Fail,
+                Message = response.Message,
+                Data = null
+            };
+        }
+
+        return new BaseResponse<SleepReadDto>
         {
             Status = ResponseStatus.Success,
             Data = null
-        });
+        };
     }
 }

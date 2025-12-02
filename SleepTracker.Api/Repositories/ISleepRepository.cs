@@ -12,4 +12,6 @@ public interface ISleepRepository
     public Task<BaseResponse<Sleep>> CreateSleep(Sleep newSleep);
 
     public Task<BaseResponse<Sleep>> UpdateSleep(Sleep updatedSleep);
+
+    public Task<BaseResponse<Sleep>> DeleteSleep(int id);
 }

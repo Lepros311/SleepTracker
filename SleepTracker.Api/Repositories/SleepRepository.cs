@@ -160,4 +160,11 @@ public class SleepRepository : ISleepRepository
 
         return response;
     }
+
+    public async Task<BaseResponse<Sleep>> DeleteSleep(int id)
+    {
+        var response = new BaseResponse<Sleep>();
+
+        return response;
+    }
 }
