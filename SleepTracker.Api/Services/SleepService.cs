@@ -1,7 +1,6 @@
 ﻿using SleepTracker.Api.Models;
 using SleepTracker.Api.Repositories;
 using SleepTracker.Api.Responses;
-using System.Globalization;
 
 namespace SleepTracker.Api.Services;
 
@@ -72,8 +71,17 @@ public class SleepService : ISleepService
 
     public async Task<BaseResponse<SleepReadDto>> CreateSleep(SleepCreateDto sleepCreateDto)
     {
-        var response = new BaseResponse<Sleep>();
         var responseWithDataDto = new BaseResponse<SleepReadDto>();
+
+        var start = DateTime.Parse(sleepCreateDto.Start);
+        var end = DateTime.Parse(sleepCreateDto.End);
+
+        if (start >= end)
+        {
+            responseWithDataDto.Status = ResponseStatus.Fail;
+            responseWithDataDto.Message = "Start time must be earlier than end time.";
+            return responseWithDataDto;
+        }
 
         var newSleep = new Sleep
         {
@@ -81,7 +89,7 @@ public class SleepService : ISleepService
             End = DateTime.Parse(sleepCreateDto.End)
         };
 
-        response = await _sleepRepository.CreateSleep(newSleep);
+        var response = await _sleepRepository.CreateSleep(newSleep);
 
         if (response.Status == ResponseStatus.Fail)
         {
@@ -115,6 +123,16 @@ public class SleepService : ISleepService
             {
                 Status = ResponseStatus.Fail,
                 Message = "Invalid date format.",
+                Data = null
+            };
+        }
+
+        if (start >= end)
+        {
+            return new BaseResponse<SleepReadDto>
+            {
+                Status = ResponseStatus.Fail,
+                Message = "Start time must be earlier than end time.",
                 Data = null
             };
         }

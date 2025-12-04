@@ -3,7 +3,6 @@ using SleepTracker.Api.Models;
 using SleepTracker.Api.Repositories;
 using SleepTracker.Api.Responses;
 using SleepTracker.Api.Services;
-using System.Runtime.InteropServices;
 
 namespace SleepTracker.Api.Tests;
 
@@ -155,6 +154,29 @@ public class SleepServiceTests
     }
 
     [TestMethod]
+    public async Task CreateSleep_ReturnsFail_WhenStartIsAfterEnd()
+    {
+        // Arrange
+        var invalidSleepCreateDto = new SleepCreateDto
+        {
+            Start = DateTime.UtcNow.AddHours(8).ToString("O"),
+            End = DateTime.UtcNow.ToString("O")
+        };
+
+        var service = new SleepService(_mockRepository.Object);
+
+        // Act
+        var result = await service.CreateSleep(invalidSleepCreateDto);
+
+        // Assert
+        Assert.AreEqual(ResponseStatus.Fail, result.Status);
+        Assert.AreEqual("Start time must be earlier than end time.", result.Message);
+        Assert.IsNull(result.Data);
+
+        _mockRepository.Verify(r => r.CreateSleep(It.IsAny<Sleep>()), Times.Never);
+    }
+
+    [TestMethod]
     public async Task CreateSleep_ReturnsFail_WhenRepositoryFails()
     {
         // Arrange
@@ -216,6 +238,29 @@ public class SleepServiceTests
         Assert.AreEqual(1, result.Data.Id);
         Assert.AreEqual(sleepUpdateDto.Start, result.Data.Start);
         Assert.AreEqual(sleepUpdateDto.End, result.Data.End);
+    }
+
+    [TestMethod]
+    public async Task UpdateSleep_ReturnsFail_WhenStartIsAfterEnd()
+    {
+        // Arrange
+        var invalidSleepUpdateDto = new SleepUpdateDto
+        {
+            Start = DateTime.UtcNow.AddHours(8).ToString("O"),
+            End = DateTime.UtcNow.ToString("O")
+        };
+
+        var service = new SleepService(_mockRepository.Object);
+
+        // Act
+        var result = await service.UpdateSleep(1, invalidSleepUpdateDto);
+
+        // Assert
+        Assert.AreEqual(ResponseStatus.Fail, result.Status);
+        Assert.AreEqual("Start time must be earlier than end time.", result.Message);
+        Assert.IsNull(result.Data);
+
+        _mockRepository.Verify(r => r.UpdateSleep(It.IsAny<Sleep>()), Times.Never);
     }
 
     [TestMethod]
