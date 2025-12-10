@@ -29,7 +29,7 @@ public class SleepServiceTests
             new Sleep { Id = 1 }
         };
 
-        var repositoryResponse = PagedResponse<List<Sleep>>.Success(sleepData, 1, 10, sleepData.Count);
+        var repositoryResponse = PagedResponse<List<Sleep>>.Success(sleepData, 1, 10, sleepData.Count, 1);
 
         _mockRepository.Setup(r => r.GetPagedSleeps(paginationParams)).ReturnsAsync(repositoryResponse);
 
@@ -49,7 +49,7 @@ public class SleepServiceTests
         // Arrange
         var paginationParams = new PaginationParams { Page = 1, PageSize = 10 };
 
-        var failResponse = new PagedResponse<List<Sleep>>(null, 0, 0, 0)
+        var failResponse = new PagedResponse<List<Sleep>>(null, 0, 0, 0, 0)
         {
             Status = ResponseStatus.Fail,
             Message = "DB error"

@@ -25,7 +25,7 @@ public class SleepControllerTests
     {
         // Arrange
         var paginationParams = new PaginationParams { Page = 1, PageSize = 10 };
-        var response = PagedResponse<List<SleepReadDto>>.Success(new List<SleepReadDto> { new SleepReadDto { Id = 1, DurationHours = "8" } }, 1, 10, 1);
+        var response = PagedResponse<List<SleepReadDto>>.Success(new List<SleepReadDto> { new SleepReadDto { Id = 1, DurationHours = "8" } }, 1, 10, 1, 1);
 
         _mockService.Setup(s => s.GetPagedSleeps(paginationParams)).ReturnsAsync(response);
 
