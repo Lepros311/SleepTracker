@@ -57,7 +57,7 @@ namespace SleepTracker.Api.Controllers
             return CreatedAtAction(nameof(GetSleepById), new { id = responseWithDataDto.Data.Id }, responseWithDataDto.Data);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult<SleepReadDto>> UpdateSleep(int id, [FromBody] SleepUpdateDto sleepUpdateDto)
         {
             var response = await _sleepService.UpdateSleep(id, sleepUpdateDto);

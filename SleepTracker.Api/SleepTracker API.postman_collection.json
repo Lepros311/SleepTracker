@@ -1,0 +1,141 @@
+{
+	"info": {
+		"_postman_id": "4c11144d-e715-4ad2-ba3d-dc8fc1d909c8",
+		"name": "SleepTracker API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45055274",
+		"_collection_link": "https://andrewstrickland.postman.co/workspace/Andrew-Strickland's-Workspace~bbe62028-fd77-4407-88e4-a7c7ff76f1df/collection/45055274-4c11144d-e715-4ad2-ba3d-dc8fc1d909c8?action=share&source=collection_link&creator=45055274"
+	},
+	"item": [
+		{
+			"name": "GetPagedSleeps",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/sleeps?page=1&pageSize=10",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"sleeps"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "pageSize",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetSleepById",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/sleeps/{{Id}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"sleeps",
+						"{{Id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateSleep",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Start\": \"{{Start}}\",\r\n  \"End\": \"{{End}}\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/sleeps",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"sleeps"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateSleep",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Start\": \"{{Start}}\",\r\n  \"End\": \"{{End}}\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/sleeps/{{Id}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"sleeps",
+						"{{Id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteSleep",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/sleeps/{{Id}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"sleeps",
+						"{{Id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "https://localhost:7288",
+			"type": "default"
+		}
+	]
+}

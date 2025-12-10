@@ -20,7 +20,7 @@ public class SleepService : ISleepService
         var responseWithDataDto = new PagedResponse<List<SleepReadDto>>(data: new List<SleepReadDto>(),
                                                                     pageNumber: paginationParams.Page,
                                                                     pageSize: paginationParams.PageSize,
-                                                                    totalRecords: response.TotalRecords);
+                                                                    totalRecords: response.TotalRecords, totalPages: response.TotalPages);
 
         if (response.Status == ResponseStatus.Fail)
         {
@@ -31,7 +31,10 @@ public class SleepService : ISleepService
 
         responseWithDataDto.Data = response.Data.Select(s => new SleepReadDto
         {
-            Id = s.Id
+            Id = s.Id,
+            Start = s.Start.ToString("O"),
+            End = s.End.ToString("O"),
+            DurationHours = (s.End - s.Start).TotalHours.ToString()
         }).ToList();
 
         return responseWithDataDto;

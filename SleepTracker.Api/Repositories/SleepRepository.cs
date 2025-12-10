@@ -17,9 +17,9 @@ public class SleepRepository : ISleepRepository
     public async Task<PagedResponse<List<Sleep>>> GetPagedSleeps(PaginationParams paginationParams)
     {
         var response = new PagedResponse<List<Sleep>>(data: new List<Sleep>(),
-                                                      pageNumber: paginationParams.Page, 
+                                                      pageNumber: paginationParams.Page,
                                                       pageSize: paginationParams.PageSize,
-                                                      totalRecords: 0);
+                                                      totalRecords: 0, totalPages: 0);
 
         try
         {
@@ -56,6 +56,7 @@ public class SleepRepository : ISleepRepository
             response.Status = ResponseStatus.Success;
             response.Data = pagedSleeps;
             response.TotalRecords = totalRecords;
+            response.TotalPages = (int)Math.Ceiling(totalRecords / (double)paginationParams.PageSize);
         }
         catch (Exception ex)
         {

@@ -14,17 +14,20 @@ public class PagedResponse<T>
 
     public int TotalRecords { get; set; }
 
-    public PagedResponse(T? data, int pageNumber, int pageSize, int totalRecords)
+    public int TotalPages { get; set; }
+
+    public PagedResponse(T? data, int pageNumber, int pageSize, int totalRecords, int totalPages)
     {
         Data = data;
         PageNumber = pageNumber;
         PageSize = pageSize;
         TotalRecords = totalRecords;
+        TotalPages = totalPages;
     }
 
-    public static PagedResponse<T> Success(T data, int pageNumber, int pageSize, int totalRecords)
+    public static PagedResponse<T> Success(T data, int pageNumber, int pageSize, int totalRecords, int totalPages)
     {
-        return new PagedResponse<T>(data, pageNumber, pageSize, totalRecords)
+        return new PagedResponse<T>(data, pageNumber, pageSize, totalRecords, totalPages)
         {
             Status = ResponseStatus.Success
         };
@@ -32,7 +35,7 @@ public class PagedResponse<T>
 
     public static PagedResponse<T> Fail(string message)
     {
-        return new PagedResponse<T>(default, 0, 0, 0)
+        return new PagedResponse<T>(default, 0, 0, 0, 0)
         {
             Status = ResponseStatus.Fail,
             Message = message
