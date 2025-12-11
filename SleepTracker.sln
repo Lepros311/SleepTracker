@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SleepTracker.Api", "SleepTr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SleepTracker.Api.Tests", "SleepTracker.Api.Tests\SleepTracker.Api.Tests.csproj", "{3DA0E3CF-446B-4B50-924D-EF7C486C8BAF}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "SleepTracker.Angular", "SleepTracker.Angular\SleepTracker.Angular.esproj", "{BA19BC1B-0D05-C02E-1834-DA466316CDA4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,24 @@ Global
 		{3DA0E3CF-446B-4B50-924D-EF7C486C8BAF}.Release|x64.Build.0 = Release|Any CPU
 		{3DA0E3CF-446B-4B50-924D-EF7C486C8BAF}.Release|x86.ActiveCfg = Release|Any CPU
 		{3DA0E3CF-446B-4B50-924D-EF7C486C8BAF}.Release|x86.Build.0 = Release|Any CPU
+		{BA19BC1B-0D05-C02E-1834-DA466316CDA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA19BC1B-0D05-C02E-1834-DA466316CDA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA19BC1B-0D05-C02E-1834-DA466316CDA4}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{BA19BC1B-0D05-C02E-1834-DA466316CDA4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BA19BC1B-0D05-C02E-1834-DA466316CDA4}.Debug|x64.Build.0 = Debug|Any CPU
+		{BA19BC1B-0D05-C02E-1834-DA466316CDA4}.Debug|x64.Deploy.0 = Debug|Any CPU
+		{BA19BC1B-0D05-C02E-1834-DA466316CDA4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BA19BC1B-0D05-C02E-1834-DA466316CDA4}.Debug|x86.Build.0 = Debug|Any CPU
+		{BA19BC1B-0D05-C02E-1834-DA466316CDA4}.Debug|x86.Deploy.0 = Debug|Any CPU
+		{BA19BC1B-0D05-C02E-1834-DA466316CDA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA19BC1B-0D05-C02E-1834-DA466316CDA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA19BC1B-0D05-C02E-1834-DA466316CDA4}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{BA19BC1B-0D05-C02E-1834-DA466316CDA4}.Release|x64.ActiveCfg = Release|Any CPU
+		{BA19BC1B-0D05-C02E-1834-DA466316CDA4}.Release|x64.Build.0 = Release|Any CPU
+		{BA19BC1B-0D05-C02E-1834-DA466316CDA4}.Release|x64.Deploy.0 = Release|Any CPU
+		{BA19BC1B-0D05-C02E-1834-DA466316CDA4}.Release|x86.ActiveCfg = Release|Any CPU
+		{BA19BC1B-0D05-C02E-1834-DA466316CDA4}.Release|x86.Build.0 = Release|Any CPU
+		{BA19BC1B-0D05-C02E-1834-DA466316CDA4}.Release|x86.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
