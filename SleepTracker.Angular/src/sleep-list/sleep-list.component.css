@@ -1,0 +1,100 @@
+.sleep-list-container {
+  padding: 1rem;
+  max-width: 100%;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  color: var(--mat-sys-on-surface);
+}
+
+/* Mobile-first: Stack table on small screens */
+.table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1rem;
+}
+
+.sleep-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--mat-sys-surface);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.sleep-table thead {
+  background-color: var(--mat-sys-surface-variant);
+}
+
+.sleep-table th {
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--mat-sys-on-surface-variant);
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.sleep-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  font-size: 0.875rem;
+}
+
+.sleep-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.sleep-table tbody tr:hover {
+  background-color: var(--mat-sys-surface-container-highest);
+}
+
+/* Loading and error states */
+.loading-container,
+.error-container,
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.error-container {
+  color: var(--mat-sys-error);
+}
+
+.pagination-info {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* Tablet and up: Better spacing */
+@media (min-width: 600px) {
+  .sleep-list-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .sleep-table th,
+  .sleep-table td {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+}
+
+/* Desktop: Even more spacing */
+@media (min-width: 960px) {
+  .sleep-list-container {
+    padding: 3rem;
+  }
+}

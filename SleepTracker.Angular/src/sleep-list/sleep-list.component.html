@@ -1,0 +1,51 @@
+<div class="sleep-list-container">
+  <h2 class="page-title">Sleep Records</h2>
+
+  @if (loading()) {
+    <div class="loading-container">
+      <p>Loading sleep records...</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="error-container">
+      <p>{{ error() }}</p>
+    </div>
+  }
+
+  @if (!loading() && !error() && sleeps().length > 0) {
+    <div class="table-container">
+      <table class="sleep-table">
+        <thead>
+          <tr>
+            <th>Start Date/Time</th>
+            <th>End Date/Time</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (sleep of sleeps(); track sleep.id) {
+            <tr>
+              <td>{{ formatDateTime(sleep.start) }}</td>
+              <td>{{ formatDateTime(sleep.end) }}</td>
+              <td>{{ sleep.durationHours }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-info">
+      <p>
+        Showing {{ sleeps().length }} of {{ totalRecords() }} records
+        (Page {{ pageNumber() }} of {{ totalPages() }})
+      </p>
+    </div>
+  }
+
+  @if (!loading() && !error() && sleeps().length === 0) {
+    <div class="empty-state">
+      <p>No sleep records found.</p>
+    </div>
+  }
+</div>
