@@ -35,8 +35,9 @@ export class SleepEditDialogComponent {
   loading = signal(false);
   error = signal<string | null>(null);
 
-  hours = Array.from({ length: 24 }, (_, i) => i);
+  hours = Array.from({ length: 12 }, (_, i) => i);
   minutes = Array.from({ length: 60 }, (_, i) => i);
+  periods = ['AM', 'PM'];
 
   constructor(
     private fb: FormBuilder,
@@ -47,14 +48,33 @@ export class SleepEditDialogComponent {
     const startDate = new Date(data.sleep.start);
     const endDate = new Date(data.sleep.end);
 
+    const startHour24 = startDate.getHours();
+    const endHour24 = endDate.getHours();
+
     this.editForm = this.fb.group({
       startDate: [startDate, Validators.required],
-      startHour: [startDate.getHours(), Validators.required],
+      startHour: [this.to12Hour(startHour24), Validators.required],
       startMinute: [startDate.getMinutes(), Validators.required],
+      startPeriod: [startHour24 >= 12 ? 'PM' : 'AM', Validators.required],
       endDate: [endDate, Validators.required],
-      endHour: [endDate.getHours(), Validators.required],
-      endMinute: [endDate.getMinutes(), Validators.required]
+      endHour: [this.to12Hour(endHour24), Validators.required],
+      endMinute: [endDate.getMinutes(), Validators.required],
+      endPeriod: [endHour24 >= 12 ? 'PM' : 'AM', Validators.required]
     });
+  }
+
+  to12Hour(hour24: number): number {
+    if (hour24 === 0) return 12;
+    if (hour24 > 12) return hour24 - 12;
+    return hour24;
+  }
+
+  to24Hour(hour12: number, period: string): number {
+    if (period === 'AM') {
+      return hour12 === 12 ? 0 : hour12;
+    } else {
+      return hour12 === 12 ? 12 : hour12 + 12;
+    }
   }
 
   formatHour(hour: number): string {
@@ -71,15 +91,18 @@ export class SleepEditDialogComponent {
       this.error.set(null);
 
       const formValue = this.editForm.value;
+
+      const startHour24 = this.to24Hour(formValue.startHour, formValue.startPeriod);
+      const endHour24 = this.to24Hour(formValue.endHour, formValue.endPeriod);
       
       const startDateTime = this.combineDateTime(
         formValue.startDate, 
-        formValue.startHour, 
+        startHour24, 
         formValue.startMinute
       );
       const endDateTime = this.combineDateTime(
         formValue.endDate, 
-        formValue.endHour, 
+        endHour24, 
         formValue.endMinute
       );
 

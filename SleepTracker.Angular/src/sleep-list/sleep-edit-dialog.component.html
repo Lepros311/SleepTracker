@@ -34,6 +34,15 @@
                 }
               </mat-select>
             </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field period-field">
+              <mat-label>Period</mat-label>
+              <mat-select formControlName="startPeriod">
+                @for (period of periods; track period) {
+                  <mat-option [value]="period">{{ period }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
           </div>
         </div>
       </div>
@@ -69,6 +78,15 @@
                 }
               </mat-select>
             </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field period-field">
+              <mat-label>Period</mat-label>
+              <mat-select formControlName="endPeriod">
+                @for (period of periods; track period) {
+                  <mat-option [value]="period">{{ period }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
           </div>
         </div>
       </div>
@@ -79,17 +97,20 @@
           {{ error() }}
         </div>
       }
+
+      <!-- Action buttons inside a form-row to match the structure -->
+      <div class="form-row">
+        <div class="form-actions">
+          <button mat-button type="button" (click)="onCancel()" [disabled]="loading()">Cancel</button>
+          <button mat-raised-button type="submit" color="primary" (click)="onSubmit()" [disabled]="editForm.invalid || loading()">
+            @if (loading()) {
+              Saving...
+            } @else {
+              Save
+            }
+          </button>
+        </div>
+      </div>
     </form>
   </mat-dialog-content>
-
-  <mat-dialog-actions align="end">
-    <button mat-button (click)="onCancel()" [disabled]="loading()">Cancel</button>
-    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="editForm.invalid || loading()">
-      @if (loading()) {
-        Saving...
-      } @else {
-        Save
-      }
-    </button>
-  </mat-dialog-actions>
 </div>

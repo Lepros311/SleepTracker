@@ -55,7 +55,7 @@ export class SleepListComponent implements OnInit {
   openEditDialog(sleep: SleepReadDto): void {
     const dialogRef = this.dialog.open(SleepEditDialogComponent, {
       width: '90%',
-      maxWidth: '600px', // Increased from 500px to give more room
+      maxWidth: '750px',
       data: { sleep }
     });
 
