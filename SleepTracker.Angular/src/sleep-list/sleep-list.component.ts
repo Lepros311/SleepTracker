@@ -1,13 +1,17 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { SleepService } from '../app/services/sleep';
 import { SleepReadDto } from '../app/models/sleep-read-dto';
 import { PagedResponse } from '../app/models/paged-response';
+import { SleepEditDialogComponent } from './sleep-edit-dialog.component';
 
 @Component({
   selector: 'app-sleep-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatDialogModule],
   templateUrl: './sleep-list.component.html',
   styleUrl: './sleep-list.component.css'
 })
@@ -21,7 +25,7 @@ export class SleepListComponent implements OnInit {
   totalRecords = signal(0);
   totalPages = signal(0);
 
-  constructor(private sleepService: SleepService) {}
+  constructor(private sleepService: SleepService, private dialog: MatDialog) {}
 
   ngOnInit(): void { this.loadSleeps(); }
 
@@ -31,10 +35,6 @@ export class SleepListComponent implements OnInit {
 
     this.sleepService.getSleeps(this.pageNumber(), this.pageSize()).subscribe({
       next: (response: PagedResponse<SleepReadDto[]>) => {
-        // Debug: log the response to see its structure
-        console.log('Full response:', response);
-        console.log('Status value:', response.status);
-        console.log('Status type:', typeof response.status);
         if (response.status === 0 && response.data) {
           this.sleeps.set(response.data);
           this.totalRecords.set(response.totalRecords);
@@ -48,6 +48,20 @@ export class SleepListComponent implements OnInit {
         this.error.set('Failed to load sleep records. Please try again.');
         this.loading.set(false);
         console.error('Error loading sleeps:', err);
+      }
+    });
+  }
+
+  openEditDialog(sleep: SleepReadDto): void {
+    const dialogRef = this.dialog.open(SleepEditDialogComponent, {
+      width: '90%',
+      maxWidth: '600px', // Increased from 500px to give more room
+      data: { sleep }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'updated') {
+        this.loadSleeps();
       }
     });
   }

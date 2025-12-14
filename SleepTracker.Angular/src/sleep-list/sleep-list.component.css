@@ -53,6 +53,13 @@
   background-color: var(--mat-sys-surface-container-highest);
 }
 
+/* Actions column styling */
+.actions-column {
+  width: 80px;
+  text-align: center;
+  white-space: nowrap;
+}
+
 /* Loading and error states */
 .loading-container,
 .error-container,

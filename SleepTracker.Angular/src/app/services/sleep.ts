@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { PagedResponse } from '../models/paged-response';
 import { SleepReadDto } from '../models/sleep-read-dto';
+import { SleepUpdateDto } from '../models/sleep-update-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -16,5 +17,9 @@ export class SleepService {
   getSleeps(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResponse<SleepReadDto[]>> {
     const params = new HttpParams().set('pageNumber', pageNumber.toString()).set('pageSize', pageSize.toString());
     return this.http.get<PagedResponse<SleepReadDto[]>>(`${this.baseUrl}/sleeps`, { params });
+  }
+
+  updateSleep(id: number, updateDto: SleepUpdateDto): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/sleeps/${id}`, updateDto);
   }
 }
