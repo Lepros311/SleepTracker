@@ -8,6 +8,7 @@ import { SleepReadDto } from '../app/models/sleep-read-dto';
 import { PagedResponse } from '../app/models/paged-response';
 import { SleepEditDialogComponent } from './sleep-edit-dialog.component';
 import { SleepDeleteDialogComponent } from './sleep-delete-dialog.component';
+import { SleepCreateDialogComponent } from './sleep-create-dialog.component';
 
 @Component({
   selector: 'app-sleep-list',
@@ -49,6 +50,19 @@ export class SleepListComponent implements OnInit {
         this.error.set('Failed to load sleep records. Please try again.');
         this.loading.set(false);
         console.error('Error loading sleeps:', err);
+      }
+    });
+  }
+
+  openCreateDialog(): void {
+    const dialogRef = this.dialog.open(SleepCreateDialogComponent, {
+      width: '90%',
+      maxWidth: '525px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'created') {
+        this.loadSleeps();
       }
     });
   }

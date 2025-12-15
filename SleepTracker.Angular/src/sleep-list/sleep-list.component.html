@@ -1,5 +1,11 @@
 <div class="sleep-list-container">
-  <h2 class="page-title">Sleep Records</h2>
+  <div class="header-section">
+    <h2 class="page-title">Sleep Records</h2>
+    <button mat-raised-button color="primary" (click)="openCreateDialog()">
+      <mat-icon>add</mat-icon>
+      Add Sleep Record
+    </button>
+  </div>
 
   @if (loading()) {
     <div class="loading-container">

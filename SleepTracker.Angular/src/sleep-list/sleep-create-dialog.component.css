@@ -1,0 +1,191 @@
+.dialog-container {
+  padding: 0;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+h2[mat-dialog-title] {
+  margin: 0 0 1rem 0;
+  padding: 1.5rem 1.5rem 0 1.5rem;
+}
+
+mat-dialog-content {
+  padding: 0 1.5rem;
+  min-height: 200px;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.section-label {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-field {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.date-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.time-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.time-field {
+  flex: 0 0 80px;
+  max-width: 80px;
+}
+
+/* Hour field - smaller notch for "Hour" label */
+.time-group > .time-field:nth-of-type(1) ::ng-deep .mdc-notched-outline__notch {
+  width: 45px !important;
+  max-width: 45px !important;
+}
+
+/* Minute field - wider notch for "Minute" label */
+.time-group > .time-field:nth-of-type(2) ::ng-deep .mdc-notched-outline__notch {
+  width: 55px !important;
+  max-width: 55px !important;
+}
+
+.period-field {
+  flex: 0 0 75px;
+  max-width: 75px;
+}
+
+/* Period field - wider notch for "Period" label */
+.period-field ::ng-deep .mdc-notched-outline__notch {
+  width: 50px !important;
+  max-width: 50px !important;
+}
+
+.time-separator {
+  align-self: center;
+  margin-top: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface);
+  flex-shrink: 0;
+  padding: 0 0.25rem;
+}
+
+.error-message {
+  color: var(--mat-sys-error);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Tablet and up: Side by side form fields */
+@media (min-width: 600px) {
+  .form-row {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .date-field {
+    min-width: 0;
+    flex: 0 0 160px;
+    max-width: 180px;
+  }
+
+  .time-group {
+    min-width: 0;
+    flex: 1;
+    max-width: 100%;
+  }
+
+  .time-field {
+    flex: 0 0 80px;
+    max-width: 80px;
+  }
+
+  .period-field {
+    flex: 0 0 75px;
+    max-width: 75px;
+  }
+
+  .form-actions {
+    flex: 1;
+    width: auto;
+  }
+}
+
+/* Desktop: Wider dialog and better spacing */
+@media (min-width: 960px) {
+  mat-dialog-content {
+    padding: 0 2rem;
+  }
+
+  .form-row {
+    gap: 1.5rem;
+  }
+
+  .date-field {
+    flex: 0 0 180px;
+    max-width: 200px;
+  }
+
+  .time-group {
+    flex: 1;
+    max-width: 100%;
+  }
+
+  .time-field {
+    flex: 0 0 80px;
+    max-width: 80px;
+  }
+
+  .period-field {
+    flex: 0 0 75px;
+    max-width: 75px;
+  }
+}
