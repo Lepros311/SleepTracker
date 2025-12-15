@@ -18,8 +18,8 @@
       <table class="sleep-table">
         <thead>
           <tr>
-            <th>Start Date/Time</th>
-            <th>End Date/Time</th>
+            <th>Sleep Date/Time</th>
+            <th>Wake Date/Time</th>
             <th>Duration</th>
             <th class="actions-column">Actions</th>
           </tr>
@@ -29,7 +29,7 @@
             <tr>
               <td>{{ formatDateTime(sleep.start) }}</td>
               <td>{{ formatDateTime(sleep.end) }}</td>
-              <td>{{ sleep.durationHours }}</td>
+              <td>{{ sleep.durationHours }} hours</td>
               <td class="actions-column">
                 <button
                   mat-icon-button
@@ -37,6 +37,13 @@
                   (click)="openEditDialog(sleep)"
                   aria-label="Edit sleep record">
                 <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="deleteSleep(sleep)"
+                aria-label="Delete sleep record">
+                <mat-icon>delete</mat-icon>
               </button>
               </td>
             </tr>

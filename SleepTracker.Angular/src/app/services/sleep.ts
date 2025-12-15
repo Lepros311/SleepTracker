@@ -22,4 +22,8 @@ export class SleepService {
   updateSleep(id: number, updateDto: SleepUpdateDto): Observable<void> {
     return this.http.put<void>(`${this.baseUrl}/sleeps/${id}`, updateDto);
   }
+
+  deleteSleep(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/sleeps/${id}`);
+  }
 }

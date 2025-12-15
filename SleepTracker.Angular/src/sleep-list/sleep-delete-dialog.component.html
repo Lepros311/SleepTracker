@@ -1,0 +1,18 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>Delete Sleep Record</h2>
+
+  <mat-dialog-content>
+    <p>Are you sure you want to delete this sleep record?</p>
+    <div class="sleep-details">
+      <p><strong>Sleep:</strong> {{ formatDateTime(data.startDate) }}</p>
+      <p><strong>Wake:</strong> {{ formatDateTime(data.endDate) }}</p>
+      <p><strong>Duration:</strong> {{ data.durationHours }} hours</p>
+    </div>
+    <p class="warning-text">This action cannot be undone.</p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="warn" (click)="onConfirm()">Delete</button>
+  </mat-dialog-actions>
+</div>

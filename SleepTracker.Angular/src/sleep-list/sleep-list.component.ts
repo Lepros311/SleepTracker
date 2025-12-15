@@ -7,6 +7,7 @@ import { SleepService } from '../app/services/sleep';
 import { SleepReadDto } from '../app/models/sleep-read-dto';
 import { PagedResponse } from '../app/models/paged-response';
 import { SleepEditDialogComponent } from './sleep-edit-dialog.component';
+import { SleepDeleteDialogComponent } from './sleep-delete-dialog.component';
 
 @Component({
   selector: 'app-sleep-list',
@@ -55,13 +56,39 @@ export class SleepListComponent implements OnInit {
   openEditDialog(sleep: SleepReadDto): void {
     const dialogRef = this.dialog.open(SleepEditDialogComponent, {
       width: '90%',
-      maxWidth: '750px',
+      maxWidth: '525px',
       data: { sleep }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result === 'updated') {
         this.loadSleeps();
+      }
+    });
+  }
+
+  deleteSleep(sleep: SleepReadDto): void {
+    const dialogRef = this.dialog.open(SleepDeleteDialogComponent, {
+      width: '90%',
+      maxWidth: '400px',
+      data: {
+        startDate: sleep.start,
+        endDate: sleep.end,
+        durationHours: sleep.durationHours
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.sleepService.deleteSleep(sleep.id).subscribe({
+          next: () => {
+            this.loadSleeps();
+          },
+          error: (err) => {
+            alert('Failed to delete sleep record. Please try again.');
+            console.error('Error deleting sleep:', err);
+          }
+        });
       }
     });
   }
