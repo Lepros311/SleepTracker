@@ -44,24 +44,15 @@ export class SleepCreateDialogComponent {
     private sleepService: SleepService,
     private dialogRef: MatDialogRef<SleepCreateDialogComponent>
   ) {
-    // Initialize with current date/time
-    const now = new Date();
-    const startDate = new Date(now);
-    startDate.setHours(now.getHours() - 8); // Default to 8 hours ago for start
-    const endDate = new Date(now);
-
-    const startHour24 = startDate.getHours();
-    const endHour24 = endDate.getHours();
-
     this.createForm = this.fb.group({
-      startDate: [startDate, Validators.required],
-      startHour: [this.to12Hour(startHour24), Validators.required],
-      startMinute: [startDate.getMinutes(), Validators.required],
-      startPeriod: [startHour24 >= 12 ? 'PM' : 'AM', Validators.required],
-      endDate: [endDate, Validators.required],
-      endHour: [this.to12Hour(endHour24), Validators.required],
-      endMinute: [endDate.getMinutes(), Validators.required],
-      endPeriod: [endHour24 >= 12 ? 'PM' : 'AM', Validators.required]
+      startDate: [null, Validators.required],
+      startHour: [null, Validators.required],
+      startMinute: [null, Validators.required],
+      startPeriod: [null, Validators.required],
+      endDate: [null, Validators.required],
+      endHour: [null, Validators.required],
+      endMinute: [null, Validators.required],
+      endPeriod: [null, Validators.required]
     });
   }
 

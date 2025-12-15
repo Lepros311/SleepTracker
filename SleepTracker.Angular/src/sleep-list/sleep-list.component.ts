@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -27,9 +27,20 @@ export class SleepListComponent implements OnInit {
   totalRecords = signal(0);
   totalPages = signal(0);
 
+  timerRunning = signal(false);
+  timerStartTime = signal<Date | null>(null);
+  elapsedTime = signal<string>('00:00:00');
+  private timerInterval: any = null;
+
   constructor(private sleepService: SleepService, private dialog: MatDialog) {}
 
   ngOnInit(): void { this.loadSleeps(); }
+
+  ngOnDestroy(): void {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
+  }
 
   loadSleeps(): void {
     this.loading.set(true);
@@ -52,6 +63,60 @@ export class SleepListComponent implements OnInit {
         console.error('Error loading sleeps:', err);
       }
     });
+  }
+
+  startSleepTimer(): void {
+    const startTime = new Date();
+    this.timerStartTime.set(startTime);
+    this.timerRunning.set(true);
+    this.elapsedTime.set('00:00:00');
+    
+    this.timerInterval = setInterval(() => {
+      if (this.timerStartTime()) {
+        const now = new Date();
+        const elapsed = Math.floor((now.getTime() - this.timerStartTime()!.getTime()) / 1000);
+        this.elapsedTime.set(this.formatElapsedTime(elapsed));
+      }
+    }, 1000);
+  }
+
+  stopSleepTimer(): void {
+    if (!this.timerStartTime()) {
+      return;
+    }
+
+    // Clear the interval
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+
+    const startTime = this.timerStartTime()!;
+    const endTime = new Date();
+
+    const createDto = {
+      start: startTime.toISOString(),
+      end: endTime.toISOString()
+    };
+
+    this.sleepService.createSleep(createDto).subscribe({
+      next: () => {
+        this.timerRunning.set(false);
+        this.timerStartTime.set(null);
+        this.loadSleeps();
+      },
+      error: (err) => {
+        alert('Failed to create sleep record. Please try again.');
+        console.error('Error creating sleep:', err);
+      }
+    });
+  }
+
+  formatElapsedTime(seconds: number): string {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }
 
   openCreateDialog(): void {

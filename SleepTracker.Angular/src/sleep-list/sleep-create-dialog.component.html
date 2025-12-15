@@ -17,7 +17,7 @@
           <div class="time-group">
             <mat-form-field appearance="outline" class="form-field time-field">
               <mat-label>Hour</mat-label>
-              <mat-select formControlName="startHour">
+              <mat-select formControlName="endHour" placeholder="">
                 @for (hour of hours; track hour) {
                   <mat-option [value]="hour">{{ formatHour(hour) }}</mat-option>
                 }
@@ -28,7 +28,7 @@
 
             <mat-form-field appearance="outline" class="form-field time-field">
               <mat-label>Minute</mat-label>
-              <mat-select formControlName="startMinute">
+              <mat-select formControlName="endMinute" placeholder="">
                 @for (minute of minutes; track minute) {
                   <mat-option [value]="minute">{{ formatMinute(minute) }}</mat-option>
                 }
@@ -37,7 +37,7 @@
 
             <mat-form-field appearance="outline" class="form-field period-field">
               <mat-label>Period</mat-label>
-              <mat-select formControlName="startPeriod">
+              <mat-select formControlName="endPeriod" placeholder="AM">
                 @for (period of periods; track period) {
                   <mat-option [value]="period">{{ period }}</mat-option>
                 }
@@ -61,7 +61,7 @@
           <div class="time-group">
             <mat-form-field appearance="outline" class="form-field time-field">
               <mat-label>Hour</mat-label>
-              <mat-select formControlName="endHour">
+              <mat-select formControlName="endHour" placeholder="">
                 @for (hour of hours; track hour) {
                   <mat-option [value]="hour">{{ formatHour(hour) }}</mat-option>
                 }
@@ -72,7 +72,7 @@
 
             <mat-form-field appearance="outline" class="form-field time-field">
               <mat-label>Minute</mat-label>
-              <mat-select formControlName="endMinute">
+              <mat-select formControlName="endMinute" placeholder="">
                 @for (minute of minutes; track minute) {
                   <mat-option [value]="minute">{{ formatMinute(minute) }}</mat-option>
                 }
@@ -81,7 +81,7 @@
 
             <mat-form-field appearance="outline" class="form-field period-field">
               <mat-label>Period</mat-label>
-              <mat-select formControlName="endPeriod">
+              <mat-select formControlName="endPeriod" placeholder="">
                 @for (period of periods; track period) {
                   <mat-option [value]="period">{{ period }}</mat-option>
                 }

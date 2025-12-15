@@ -1,10 +1,26 @@
 <div class="sleep-list-container">
   <div class="header-section">
     <h2 class="page-title">Sleep Records</h2>
-    <button mat-raised-button color="primary" (click)="openCreateDialog()">
-      <mat-icon>add</mat-icon>
-      Add Sleep Record
-    </button>
+    <div class="header-actions">
+      @if (!timerRunning()) {
+        <button mat-raised-button color="primary" (click)="startSleepTimer()">
+          <mat-icon>play_arrow</mat-icon>
+          Start Sleep Timer
+        </button>
+      } @else {
+        <div class="timer-display">
+          <span class="timer-text">{{ elapsedTime() }}</span>
+          <button mat-raised-button color="warn" (click)="stopSleepTimer()">
+            <mat-icon>stop</mat-icon>
+            Stop
+          </button>
+        </div>
+      }
+      <button mat-raised-button color="primary" (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon>
+        Add Sleep Record
+      </button>
+    </div>
   </div>
 
   @if (loading()) {
@@ -42,15 +58,15 @@
                   color="primary"
                   (click)="openEditDialog(sleep)"
                   aria-label="Edit sleep record">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button
-                mat-icon-button
-                color="warn"
-                (click)="deleteSleep(sleep)"
-                aria-label="Delete sleep record">
-                <mat-icon>delete</mat-icon>
-              </button>
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="deleteSleep(sleep)"
+                  aria-label="Delete sleep record">
+                  <mat-icon>delete</mat-icon>
+                </button>
               </td>
             </tr>
           }
