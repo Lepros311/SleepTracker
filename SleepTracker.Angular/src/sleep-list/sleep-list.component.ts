@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { SleepService } from '../app/services/sleep';
 import { SleepReadDto } from '../app/models/sleep-read-dto';
 import { PagedResponse } from '../app/models/paged-response';
@@ -25,7 +26,8 @@ import { SleepCreateDialogComponent } from './sleep-create-dialog.component';
     MatFormFieldModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatInputModule
+    MatInputModule,
+    MatSnackBarModule
   ],
   templateUrl: './sleep-list.component.html',
   styleUrl: './sleep-list.component.css'
@@ -48,7 +50,11 @@ export class SleepListComponent implements OnInit, OnDestroy {
   filterStartDate = signal<Date | null>(null);
   filterEndDate = signal<Date | null>(null);
 
-  constructor(private sleepService: SleepService, private dialog: MatDialog) {}
+  constructor(
+    private sleepService: SleepService, 
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit(): void { this.loadSleeps(); }
 
@@ -75,6 +81,11 @@ export class SleepListComponent implements OnInit, OnDestroy {
           this.totalPages.set(response.totalPages);
         } else {
           this.error.set(response.message || 'Failed to load sleep records');
+          this.snackBar.open('Failed to load sleep records', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom'
+          });
         }
         this.loading.set(false);
       },
@@ -82,6 +93,11 @@ export class SleepListComponent implements OnInit, OnDestroy {
         this.error.set('Failed to load sleep records. Please try again.');
         this.loading.set(false);
         console.error('Error loading sleeps:', err);
+        this.snackBar.open('Failed to load sleep records. Please try again.', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom'
+        });
       }
     });
   }
@@ -138,10 +154,19 @@ export class SleepListComponent implements OnInit, OnDestroy {
         this.timerStartTime.set(null);
         this.elapsedTime.set('00:00:00');
         this.loadSleeps();
+        this.snackBar.open('Sleep record created successfully', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom'
+        });
       },
       error: (err) => {
-        alert('Failed to create sleep record. Please try again.');
         console.error('Error creating sleep:', err);
+        this.snackBar.open('Failed to create sleep record. Please try again.', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom'
+        });
       }
     });
   }
@@ -162,6 +187,11 @@ export class SleepListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result === 'created') {
         this.loadSleeps();
+        this.snackBar.open('Sleep record created successfully', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom'
+        });
       }
     });
   }
@@ -176,6 +206,11 @@ export class SleepListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result === 'updated') {
         this.loadSleeps();
+        this.snackBar.open('Sleep record updated successfully', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom'
+        });
       }
     });
   }
@@ -196,10 +231,19 @@ export class SleepListComponent implements OnInit, OnDestroy {
         this.sleepService.deleteSleep(sleep.id).subscribe({
           next: () => {
             this.loadSleeps();
+            this.snackBar.open('Sleep record deleted successfully', 'Close', {
+              duration: 3000,
+              horizontalPosition: 'center',
+              verticalPosition: 'bottom'
+            });
           },
           error: (err) => {
-            alert('Failed to delete sleep record. Please try again.');
             console.error('Error deleting sleep:', err);
+            this.snackBar.open('Failed to delete sleep record. Please try again.', 'Close', {
+              duration: 3000,
+              horizontalPosition: 'center',
+              verticalPosition: 'bottom'
+            });
           }
         });
       }

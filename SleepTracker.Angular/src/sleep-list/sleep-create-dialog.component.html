@@ -5,7 +5,7 @@
     <form [formGroup]="createForm" class="edit-form">
       <!-- Start Date/Time -->
       <div class="form-section">
-        <h3 class="section-label">Start</h3>
+        <h3 class="section-label">Sleep</h3>
         <div class="form-row">
           <mat-form-field appearance="outline" class="form-field date-field">
             <mat-label>Date</mat-label>
@@ -17,7 +17,7 @@
           <div class="time-group">
             <mat-form-field appearance="outline" class="form-field time-field">
               <mat-label>Hour</mat-label>
-              <mat-select formControlName="endHour" placeholder="">
+              <mat-select formControlName="startHour" placeholder="">
                 @for (hour of hours; track hour) {
                   <mat-option [value]="hour">{{ formatHour(hour) }}</mat-option>
                 }
@@ -28,7 +28,7 @@
 
             <mat-form-field appearance="outline" class="form-field time-field">
               <mat-label>Minute</mat-label>
-              <mat-select formControlName="endMinute" placeholder="">
+              <mat-select formControlName="startMinute" placeholder="">
                 @for (minute of minutes; track minute) {
                   <mat-option [value]="minute">{{ formatMinute(minute) }}</mat-option>
                 }
@@ -37,7 +37,7 @@
 
             <mat-form-field appearance="outline" class="form-field period-field">
               <mat-label>Period</mat-label>
-              <mat-select formControlName="endPeriod" placeholder="AM">
+              <mat-select formControlName="startPeriod" placeholder="AM">
                 @for (period of periods; track period) {
                   <mat-option [value]="period">{{ period }}</mat-option>
                 }
@@ -49,7 +49,7 @@
 
       <!-- End Date/Time -->
       <div class="form-section">
-        <h3 class="section-label">End</h3>
+        <h3 class="section-label">Wake</h3>
         <div class="form-row">
           <mat-form-field appearance="outline" class="form-field date-field">
             <mat-label>Date</mat-label>

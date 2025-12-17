@@ -191,6 +191,7 @@
     align-items: center;
     width: 100%;
     gap: 1.5rem;
+    margin-bottom: 0;
   }
 
   .filter-section {
