@@ -3,6 +3,10 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatInputModule } from '@angular/material/input';
 import { SleepService } from '../app/services/sleep';
 import { SleepReadDto } from '../app/models/sleep-read-dto';
 import { PagedResponse } from '../app/models/paged-response';
@@ -13,11 +17,20 @@ import { SleepCreateDialogComponent } from './sleep-create-dialog.component';
 @Component({
   selector: 'app-sleep-list',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatDialogModule],
+  imports: [
+    CommonModule, 
+    MatButtonModule, 
+    MatIconModule, 
+    MatDialogModule,
+    MatFormFieldModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatInputModule
+  ],
   templateUrl: './sleep-list.component.html',
   styleUrl: './sleep-list.component.css'
 })
-export class SleepListComponent implements OnInit {
+export class SleepListComponent implements OnInit, OnDestroy {
   sleeps = signal<SleepReadDto[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
@@ -31,6 +44,9 @@ export class SleepListComponent implements OnInit {
   timerStartTime = signal<Date | null>(null);
   elapsedTime = signal<string>('00:00:00');
   private timerInterval: any = null;
+
+  filterStartDate = signal<Date | null>(null);
+  filterEndDate = signal<Date | null>(null);
 
   constructor(private sleepService: SleepService, private dialog: MatDialog) {}
 
@@ -46,7 +62,12 @@ export class SleepListComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    this.sleepService.getSleeps(this.pageNumber(), this.pageSize()).subscribe({
+    this.sleepService.getSleeps(
+      this.pageNumber(), 
+      this.pageSize(),
+      this.filterStartDate() || undefined,
+      this.filterEndDate() || undefined
+    ).subscribe({
       next: (response: PagedResponse<SleepReadDto[]>) => {
         if (response.status === 0 && response.data) {
           this.sleeps.set(response.data);
@@ -63,6 +84,18 @@ export class SleepListComponent implements OnInit {
         console.error('Error loading sleeps:', err);
       }
     });
+  }
+
+  onFilterChange(): void {
+    this.pageNumber.set(1); // Reset to first page when filter changes
+    this.loadSleeps();
+  }
+
+  clearFilters(): void {
+    this.filterStartDate.set(null);
+    this.filterEndDate.set(null);
+    this.pageNumber.set(1);
+    this.loadSleeps();
   }
 
   startSleepTimer(): void {
@@ -103,6 +136,7 @@ export class SleepListComponent implements OnInit {
       next: () => {
         this.timerRunning.set(false);
         this.timerStartTime.set(null);
+        this.elapsedTime.set('00:00:00');
         this.loadSleeps();
       },
       error: (err) => {
@@ -182,5 +216,26 @@ export class SleepListComponent implements OnInit {
       minute: '2-digit',
       hour12: true
     });
+  }
+
+  formatDuration(start: string, end: string): string {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const diffMs = endDate.getTime() - startDate.getTime();
+    const diffSeconds = Math.floor(diffMs / 1000);
+    const diffMinutes = Math.floor(diffSeconds / 60);
+    const hours = Math.floor(diffMinutes / 60);
+    const minutes = diffMinutes % 60;
+    const seconds = diffSeconds % 60;
+
+    if (diffSeconds < 60) {
+      return `${seconds} second${seconds !== 1 ? 's' : ''}`;
+    } else if (hours === 0) {
+      return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+    } else if (minutes === 0) {
+      return `${hours} hour${hours !== 1 ? 's' : ''}`;
+    } else {
+      return `${hours} hour${hours !== 1 ? 's' : ''} and ${minutes} minute${minutes !== 1 ? 's' : ''}`;
+    }
   }
 }

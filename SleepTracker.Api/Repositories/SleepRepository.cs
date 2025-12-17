@@ -26,9 +26,9 @@ public class SleepRepository : ISleepRepository
             var query = _dbContext.Sleeps.AsQueryable();
 
             if (paginationParams.Start != null)
-                query = query.Where(s => s.Start.Date == paginationParams.Start.Value.Date);
+                query = query.Where(s => s.Start.Date >= paginationParams.Start.Value.Date);
             if (paginationParams.End != null)
-                query = query.Where(s => s.End.Date == paginationParams.End.Value.Date);
+                query = query.Where(s => s.End.Date <= paginationParams.End.Value.Date);
             if (paginationParams.MinDurationHours.HasValue)
                 query = query.Where(s => s.DurationHours >= paginationParams.MinDurationHours.Value);
             if (paginationParams.MaxDurationHours.HasValue)

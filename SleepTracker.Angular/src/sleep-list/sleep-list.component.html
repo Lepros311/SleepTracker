@@ -23,6 +23,31 @@
     </div>
   </div>
 
+  <div class="filter-section">
+    <div class="filter-fields">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Start Date</mat-label>
+        <input matInput [matDatepicker]="startPicker" [value]="filterStartDate()" (dateChange)="filterStartDate.set($event.value); onFilterChange()">
+        <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>End Date</mat-label>
+        <input matInput [matDatepicker]="endPicker" [value]="filterEndDate()" (dateChange)="filterEndDate.set($event.value); onFilterChange()">
+        <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+
+      @if (filterStartDate() || filterEndDate()) {
+        <button mat-button (click)="clearFilters()">
+          <mat-icon>clear</mat-icon>
+          Clear Filters
+        </button>
+      }
+    </div>
+  </div>
+
   @if (loading()) {
     <div class="loading-container">
       <p>Loading sleep records...</p>
@@ -51,7 +76,7 @@
             <tr>
               <td>{{ formatDateTime(sleep.start) }}</td>
               <td>{{ formatDateTime(sleep.end) }}</td>
-              <td>{{ sleep.durationHours }} hours</td>
+              <td>{{ formatDuration(sleep.start, sleep.end) }}</td>
               <td class="actions-column">
                 <button
                   mat-icon-button
