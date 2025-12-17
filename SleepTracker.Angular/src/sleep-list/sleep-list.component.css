@@ -11,34 +11,72 @@
 }
 
 .filter-section {
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background-color: var(--mat-sys-surface-variant);
-  border-radius: 4px;
+  padding: 0;
+  background-color: transparent;
+  border-radius: 0;
 }
 
 .filter-fields {
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-items: flex-start;
+  flex-direction: row;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: nowrap;
 }
 
 .filter-field {
   width: 100%;
-  max-width: 200px;
+  max-width: 140px;
+  flex: 1 1 auto;
+  min-width: 120px;
 }
 
-/* Tablet and up: Side by side filter fields */
-@media (min-width: 600px) {
-  .filter-fields {
-    flex-direction: row;
-    align-items: center;
+.filter-fields button {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Reduce font size on mobile only */
+@media (max-width: 599px) {
+  .filter-field ::ng-deep input {
+    font-size: 0.65rem !important;
+  }
+  
+  .filter-field ::ng-deep .mat-mdc-input-element {
+    font-size: 0.65rem !important;
+  }
+  
+  .filter-field ::ng-deep .mat-mdc-text-field-input {
+    font-size: 0.65rem !important;
   }
 
-  .filter-field {
-    max-width: 180px;
+  .header-section {
+    gap: 0.25rem;
   }
+}
+
+/* Make filter field labels smaller and more compact */
+.filter-field ::ng-deep .mat-mdc-form-field-label {
+  font-size: 0.75rem !important;
+}
+
+.filter-field ::ng-deep .mat-mdc-text-field-wrapper {
+  padding-top: 0 !important;
+}
+
+.filter-field ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  min-height: 0 !important;
+}
+
+/* Make filter field labels smaller when they appear inside the field (before focus/value) */
+.filter-field ::ng-deep mat-label {
+  font-size: 0.75rem !important;
+}
+
+/* Restore normal size when label floats to notch */
+.filter-field ::ng-deep .mat-mdc-form-field.mat-focused mat-label,
+.filter-field ::ng-deep .mat-mdc-form-field.mat-form-field-has-value mat-label {
+  font-size: 0.75rem !important;
 }
 
 .header-actions {
@@ -143,6 +181,8 @@
 @media (min-width: 600px) {
   .sleep-list-container {
     padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
   }
 
   .header-section {
@@ -150,16 +190,39 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    gap: 1.5rem;
   }
 
-  .header-actions {
+  .filter-section {
+    flex: 0 0 auto;
+    margin: 0;
+    order: 1;
+  }
+
+  .filter-fields {
     flex-direction: row;
+    align-items: center;
     gap: 0.75rem;
+  }
+
+  .filter-field {
+    max-width: 140px;
   }
 
   .page-title {
     font-size: 2rem;
     margin: 0;
+    flex-shrink: 0;
+    order: 2;
+    flex: 1;
+    text-align: center;
+  }
+
+  .header-actions {
+    flex-direction: row;
+    gap: 0.75rem;
+    flex-shrink: 0;
+    order: 3;
   }
 
   .sleep-table th,
@@ -173,5 +236,13 @@
 @media (min-width: 960px) {
   .sleep-list-container {
     padding: 3rem;
+  }
+
+  .header-section {
+    gap: 2rem;
+  }
+
+  .filter-field {
+    max-width: 150px;
   }
 }

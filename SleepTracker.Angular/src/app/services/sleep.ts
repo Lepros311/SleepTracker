@@ -16,11 +16,21 @@ export class SleepService {
   constructor(private http: HttpClient) {}
 
   getSleeps(pageNumber: number = 1, pageSize: number = 10, startDate?: Date, endDate?: Date): Observable<PagedResponse<SleepReadDto[]>> {
-    let params = new HttpParams().set('pageNumber', pageNumber.toString()).set('pageSize', pageSize.toString());
+    let params = new HttpParams().set('Page', pageNumber.toString()).set('PageSize', pageSize.toString());
 
-    if (startDate) { params = params.set('Start', startDate.toISOString()); }
+    if (startDate) {
+      // Normalize to start of day
+      const normalizedStart = new Date(startDate);
+      normalizedStart.setHours(0, 0, 0, 0);
+      params = params.set('Start', normalizedStart.toISOString());
+    }
 
-    if (endDate) { params = params.set('End', endDate.toISOString()); }
+    if (endDate) {
+      // Normalize to start of day (end of day will be handled by <= comparison)
+      const normalizedEnd = new Date(endDate);
+      normalizedEnd.setHours(23, 59, 59, 999);
+      params = params.set('End', normalizedEnd.toISOString());
+    }
 
     return this.http.get<PagedResponse<SleepReadDto[]>>(`${this.baseUrl}/sleeps`, { params });
   }
