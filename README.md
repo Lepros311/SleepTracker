@@ -9,13 +9,13 @@ The [Sleep Tracker](https://www.thecsharpacademy.com/project/33/sleep-tracker) p
 - [x] You need to use Angular Material.
 - [x] You should have a filter functionality, so I can show records per type and or date.
 - [x] Your database should have a single 'Records' table.The objective is to focus on Angular, so we should avoid the complexities of relational data.
-- [ ] This app needs to have a timer that will log your sleep once stopped and saved.
-- [ ] Users should also be able to input their sleep time using a form.
-- [ ] Every action performed in the app should prompt a 'Toast' notification indicating success or failure.
-- [ ] Your list of sleep records should have pagination, so you're not loading all records every time you visualise the list.
-- [ ] This app should be mobile-first, since realistically , most users will use it from their phones.
-- [ ] Your app should contain integration tests for the services that are interacting with the database, and unit tests where you find applicable.
-- [ ] Your repository should contain a Postman collection with all endpoints documented for easy testing.
+- [x] This app needs to have a timer that will log your sleep once stopped and saved.
+- [x] Users should also be able to input their sleep time using a form.
+- [x] Every action performed in the app should prompt a 'Toast' notification indicating success or failure.
+- [x] Your list of sleep records should have pagination, so you're not loading all records every time you visualise the list.
+- [x] This app should be mobile-first, since realistically , most users will use it from their phones.
+- [x] Your app should contain integration tests for the services that are interacting with the database, and unit tests where you find applicable.
+- [x] Your repository should contain a Postman collection with all endpoints documented for easy testing.
 
 ## Running the App
 
