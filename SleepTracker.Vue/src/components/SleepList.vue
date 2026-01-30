@@ -285,11 +285,58 @@ async function deleteSleepRecord(sleep: SleepReadDto) {
       <p>{{ error }}</p>
     </div>
 
-    <!-- Table and empty state will go here -->
+    <div v-if="!loading && !error && sleeps.length > 0" class="table-container">
+      <table class="sleep-table">
+        <thead>
+          <tr>
+            <th>Sleep Date/Time</th>
+            <th>Wake Date/Time</th>
+            <th>Duration</th>
+            <th class="actions-column">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="sleep in sleeps" :key="sleeps.id">
+            <td>{{ formatDateTime(sleep.start) }}</td>
+            <td>{{ formatDateTime(sleep.end) }}</td>
+            <td>{{ formatDuration(sleep.start, sleep.end) }}</td>
+            <td class="actions-column">
+              <button type="button" @click="openEditModal(sleep)" aria-label="Edit">Edit</button>
+              <button type="button" @click="deleteSleepRecord(sleep)" aria-label="Delete">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.table-container {
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+.sleep-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sleep-table th,
+.sleep-table td {
+  padding: 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sleep-table thead {
+  background-color: #f3f4f6;
+}
+
+.actions-column {
+  white-space: nowrap;
+}
+
 .header-section {
   display: flex;
   flex-direction: column;
