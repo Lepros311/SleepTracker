@@ -256,13 +256,13 @@ async function deleteSleepRecord(sleep: SleepReadDto) {
           <input
             type="date"
             :value="filterStartDate ? filterStartDate.toISOString().slice(0, 10) : ''"
-            @input="filterStartDate = ($event.target as HTMLInputElement).value ? new Date(($event.target as HTMLInputElement).value) : null; onFilterChange()"
+            @change="filterStartDate = ($event.target as HTMLInputElement).value ? new Date(($event.target as HTMLInputElement).value) : null; onFilterChange()"
             />
             <label>Sleep Date To</label>
             <input
               type="date"
               :value="filterEndDate ? filterEndDate.toISOString().slice(0, 10) : ''"
-              @input="filterEndDate = ($event.target as HTMLInputElement).value ? new Date(($event.target as HTMLInputElement).value) : null; onFilterChange()"
+              @change="filterEndDate = ($event.target as HTMLInputElement).value ? new Date(($event.target as HTMLInputElement).value) : null; onFilterChange()"
               />
               <button v-if="filterStartDate || filterEndDate" type="button" @click="clearFilters">Clear</button>
         </div>
