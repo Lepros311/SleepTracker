@@ -76,6 +76,30 @@ function clearFilters() {
   loadSleeps();
 }
 
+function goToPreviousPage() {
+  if (pageNumber.value <= 1) return;
+  pageNumber.value--;
+  loadSleeps();
+}
+
+function goToNextPage() {
+  if (pageNumber.value >= totalPages.value) return;
+  pageNumber.value++;
+  loadSleeps();
+}
+
+function goToFirstPage() {
+  if (pageNumber.value <= 1) return;
+  pageNumber.value = 1;
+  loadSleeps();
+}
+
+function goToLastPage() {
+  if (pageNumber.value >= totalPages.value) return;
+  pageNumber.value = totalPages.value;
+  loadSleeps();
+}
+
 function startSleepTimer() {
   const startTime = new Date();
   timerStartTime.value = startTime;
@@ -308,10 +332,66 @@ async function deleteSleepRecord(sleep: SleepReadDto) {
         </tbody>
       </table>
     </div>
+    <div v-if="!loading && !error && sleeps.length > 0" class="pagination-info">
+      <p>Showing {{ sleeps.length }} of {{ totalRecords }} records (Page {{ pageNumber }} of {{ totalPages }})</p>
+      <div v-if="totalPages > 1" class="pagination-buttons">
+        <button
+          type="button"
+          :disabled="pageNumber <= 1"
+          @click="goToFirstPage"
+        >
+        First
+        </button>
+        <button
+          type="button"
+          :disabled="pageNumber <= 1"
+          @click="goToPreviousPage"
+        >
+        Previous  
+        </button>
+        <button
+          type="button"
+          :disabled="pageNumber >= totalPages"
+          @click="goToNextPage"
+        >
+        Next
+        </button>
+        <button
+          type="button"
+          :disabled="pageNumber >= totalPages"
+          @click="goToLastPage"
+        >
+        Last
+        </button>
+      </div>
+    </div>
+    <div v-if="!loading && !error && sleeps.length === 0" class="empty-state">
+      <p>No sleep records found.</p>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.pagination-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.pagination-info {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+}
+
 .table-container {
   overflow-x: auto;
   margin-bottom: 1rem;
