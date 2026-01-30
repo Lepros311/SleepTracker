@@ -296,7 +296,7 @@ async function deleteSleepRecord(sleep: SleepReadDto) {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="sleep in sleeps" :key="sleeps.id">
+          <tr v-for="sleep in sleeps" :key="sleep.id">
             <td>{{ formatDateTime(sleep.start) }}</td>
             <td>{{ formatDateTime(sleep.end) }}</td>
             <td>{{ formatDuration(sleep.start, sleep.end) }}</td>
