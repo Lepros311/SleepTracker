@@ -248,9 +248,33 @@ async function deleteSleepRecord(sleep: SleepReadDto) {
 </script>
 
 <template>
+  <div class="sleep-list-container">
+    <!-- We'll add header (filters + actions) next -->
 
+    <div v-if="loading" class="loading-container">
+      <p>Loading sleep records...</p>
+    </div>
+
+    <div v-if="error" class="error-container">
+      <p>{{ error }}</p>
+    </div>
+
+    <!-- Table and empty state will go here -->
+  </div>
 </template>
 
 <style scoped>
+.sleep-list-container {
+  padding: 1rem;
+}
 
+.loading-container,
+.error-container {
+  padding: 2rem;
+  text-align: center;
+}
+
+.error-container {
+  color: #b91c1c;
+}
 </style>
