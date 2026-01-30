@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using SleepTracker.Api.Data;
 using SleepTracker.Api.Repositories;
 using SleepTracker.Api.Services;
-using SleepTracker.Api.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +15,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+        policy.WithOrigins("http://localhost:4200", "http://localhost:5173").AllowAnyHeader().AllowAnyMethod();
     });
 });
 

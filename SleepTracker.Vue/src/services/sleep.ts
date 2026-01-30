@@ -99,3 +99,4 @@ export async function deleteSleep(id: number): Promise<void> {
     throw new Error('Failed to delete sleep record');
   }
 }
+
