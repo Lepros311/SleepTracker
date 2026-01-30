@@ -249,7 +249,33 @@ async function deleteSleepRecord(sleep: SleepReadDto) {
 
 <template>
   <div class="sleep-list-container">
-    <!-- We'll add header (filters + actions) next -->
+    <div class="header-section">
+      <div class="filter-section">
+        <div class="filter-fields">
+          <label>Sleep Date From</label>
+          <input
+            type="date"
+            :value="filterStartDate ? filterStartDate.toISOString().slice(0, 10) : ''"
+            @input="filterStartDate = ($event.target as HTMLInputElement).value ? new Date(($event.target as HTMLInputElement).value) : null; onFilterChange()"
+            />
+            <label>Sleep Date To</label>
+            <input
+              type="date"
+              :value="filterEndDate ? filterEndDate.toISOString().slice(0, 10) : ''"
+              @input="filterEndDate = ($event.target as HTMLInputElement).value ? new Date(($event.target as HTMLInputElement).value) : null; onFilterChange()"
+              />
+              <button v-if="filterStartDate || filterEndDate" type="button" @click="clearFilters">Clear</button>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button v-if="!timerRunning" type="button" @click="startSleepTimer">Start Sleep Timer</button>
+        <template v-else>
+          <span class="timer-text">{{ elapsedTime }}</span>
+          <button type="button" @click="stopSleepTimer">Stop</button>
+        </template>
+        <button type="button" @click="openCreateModal">Add Sleep Record</button>
+      </div>
+    </div>
 
     <div v-if="loading" class="loading-container">
       <p>Loading sleep records...</p>
@@ -264,6 +290,32 @@ async function deleteSleepRecord(sleep: SleepReadDto) {
 </template>
 
 <style scoped>
+.header-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filter-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.timer-text {
+  font-family: monospace;
+  font-weight: 500;
+}
+
 .sleep-list-container {
   padding: 1rem;
 }
