@@ -332,6 +332,7 @@ async function deleteSleepRecord(sleep: SleepReadDto) {
         </tbody>
       </table>
     </div>
+
     <div v-if="!loading && !error && sleeps.length > 0" class="pagination-info">
       <p>Showing {{ sleeps.length }} of {{ totalRecords }} records (Page {{ pageNumber }} of {{ totalPages }})</p>
       <div v-if="totalPages > 1" class="pagination-buttons">
@@ -365,13 +366,82 @@ async function deleteSleepRecord(sleep: SleepReadDto) {
         </button>
       </div>
     </div>
+
     <div v-if="!loading && !error && sleeps.length === 0" class="empty-state">
       <p>No sleep records found.</p>
+    </div>
+
+    <div v-if="showCreateModal" class="modal-backdrop" @click.self="closeCreateModal">
+      <div class="modal-box" role="dialog" aria-labelledby="create-modal-title">
+        <h2 id="create-modal-title">Add Sleep Record</h2>
+        <div class="modal-form">
+          <label for="create-start">Start</label>
+          <input id="create-start" v-model="createForm.start" type="datetime-local" />
+          <label for="create-end">End</label>
+          <input id="create-end" v-model="createForm.end" type="datetime-local" />
+        </div>
+        <div class="modal-actions">
+          <button type="button" @click="closeCreateModal">Cancel</button>
+          <button type="button" @click="submitCreate">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="showEditModal" class="modal-backdrop" @click.self="closeEditModal">
+      <div class="modal-box" role="dialog" aria-labelledby="edit-modal-title">
+        <h2 id="edit-modal-title">Edit Sleep Record</h2>
+        <div class="modal-form">
+          <label for="edit-start">Start</label>
+          <input id="edit-start" v-model="editForm.start" type="datetime-local" />
+          <label for="edit-end">End</label>
+          <input id="edit-end" v-model="editForm.end" type="datetime-local" />
+        </div>
+        <div class="modal-actions">
+          <button type="button" @click="closeEditModal">Cancel</button>
+          <button type="button" @click="submitEdit">Save</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  min-width: 320px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.modal-form label {
+  font-weight: 500;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
 .pagination-buttons {
   display: flex;
   gap: 0.5rem;
