@@ -1,0 +1,4 @@
+{
+  "css.customData": ["SleepTracker.Vue/.vscode/tailwind-css-data.json"],
+  "css.lint.unknownAtRules": "ignore"
+}
