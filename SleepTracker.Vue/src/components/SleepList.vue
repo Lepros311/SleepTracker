@@ -27,6 +27,31 @@ const showEditModal = ref(false);
 const editSleep = ref<SleepReadDto | null>(null);
 const editForm = ref<{start: string; end: string}>({start: '', end: ''});
 
+const showDeleteModal = ref(false)
+const sleepToDelete = ref<SleepReadDto | null>(null)
+
+function openDeleteModal(sleep: SleepReadDto) {
+  sleepToDelete.value = sleep
+  showDeleteModal.value = true
+}
+
+function closeDeleteModal() {
+  showDeleteModal.value = false
+  sleepToDelete.value = null
+}
+
+async function confirmDelete() {
+  if (!sleepToDelete.value) return
+  try {
+    await deleteSleep(sleepToDelete.value.id)
+    closeDeleteModal()
+    loadSleeps()
+  } catch (err) {
+    console.error('Error deleting sleep: ', err)
+    alert('Failed to delete sleep record. Please try again.')
+  }
+}
+
 async function loadSleeps() {
   loading.value = true;
   error.value = null;
@@ -250,48 +275,44 @@ async function submitEdit() {
 }
 
 async function deleteSleepRecord(sleep: SleepReadDto) {
-  const confirmed = confirm(
-    `Are you sure you want to delete this sleep record?\n\n` +
-    `Start: ${formatDateTime(sleep.start)}\n` +
-    `End: ${formatDateTime(sleep.end)}\n` +
-    `Duration: ${formatDuration(sleep.start, sleep.end)}`
-  );
-
-  if (!confirmed) {
-    return;
-  }
-
-  try {
-    await deleteSleep(sleep.id);
-    loadSleeps();
-  } catch (err) {
-    console.error('Error deleting sleep: ', err);
-    alert('Failed to delete sleep record. Please try again.');
-  }
+  openDeleteModal(sleep)
 }
 </script>
 
 <template>
   <div class="sleep-list-container">
 
-    <div class="header-section">
+    <div class="header-section flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
       <div class="filter-section">
-        <div class="filter-fields">
-          <label>Sleep Date From</label>
-          <input
-            type="date"
-            :value="filterStartDate ? filterStartDate.toISOString().slice(0, 10) : ''"
-            @change="filterStartDate = ($event.target as HTMLInputElement).value ? new Date(($event.target as HTMLInputElement).value) : null; onFilterChange()"
-            />
-            <label>Sleep Date To</label>
+        <div class="filter-fields flex flex-row flex-wrap gap-2 items-center">
+          <div class="flex flex-col gap-1 w-36 min-w-0 md:w-auto">
+            <label for="filter-start">Sleep Date From</label>
             <input
+              id="filter-start"
               type="date"
+              class="input input-bordered pr-2"
+              :value="filterStartDate ? filterStartDate.toISOString().slice(0, 10) : ''"
+              @change="filterStartDate = ($event.target as HTMLInputElement).value ? new Date(($event.target as HTMLInputElement).value) : null; onFilterChange()"
+            />
+          </div>
+          <div class="flex flex-col gap-1 w-36 min-w-0 md:w-auto">
+            <label for="filter-end">Sleep Date To</label>
+            <input
+              id="filter-end"
+              type="date"
+              class="input input-bordered pr-2"
               :value="filterEndDate ? filterEndDate.toISOString().slice(0, 10) : ''"
               @change="filterEndDate = ($event.target as HTMLInputElement).value ? new Date(($event.target as HTMLInputElement).value) : null; onFilterChange()"
-              />
-              <button v-if="filterStartDate || filterEndDate" type="button" @click="clearFilters" class="btn btn-ghost btn-sm">Clear</button>
+            />
+          </div>
+          <button v-if="filterStartDate || filterEndDate" type="button" class="btn btn-ghost btn-sm btn-circle text-error flex-shrink-0 ring-1 ring-error/25 !w-7 !h-7 !min-h-0 !min-w-0 p-0 flex items-center justify-center" @click="clearFilters">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
       </div>
+
       <div class="header-actions">
         <button v-if="!timerRunning" type="button" @click="startSleepTimer" class="btn btn-primary">Start Sleep Timer</button>
         <template v-else>
@@ -311,27 +332,72 @@ async function deleteSleepRecord(sleep: SleepReadDto) {
     </div>
 
     <div v-if="!loading && !error && sleeps.length > 0" class="table-container">
-      <table class="table table-zebra">
-        <thead>
-          <tr>
-            <th>Sleep Date/Time</th>
-            <th>Wake Date/Time</th>
-            <th>Duration</th>
-            <th class="actions-column">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="sleep in sleeps" :key="sleep.id">
-            <td>{{ formatDateTime(sleep.start) }}</td>
-            <td>{{ formatDateTime(sleep.end) }}</td>
-            <td>{{ formatDuration(sleep.start, sleep.end) }}</td>
-            <td class="actions-column">
-              <button type="button" @click="openEditModal(sleep)" aria-label="Edit" class="btn btn-sm btn-ghost">Edit</button>
-              <button type="button" @click="deleteSleepRecord(sleep)" aria-label="Delete" class="btn btn-sm btn-error">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-container overflow-x-auto mb-4 hidden md:block">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>Sleep Date/Time</th>
+              <th>Wake Date/Time</th>
+              <th>Duration</th>
+              <th class="actions-column">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="sleep in sleeps" :key="sleep.id">
+              <td>{{ formatDateTime(sleep.start) }}</td>
+              <td>{{ formatDateTime(sleep.end) }}</td>
+              <td>{{ formatDuration(sleep.start, sleep.end) }}</td>
+              <td class="actions-column">
+                <button type="button" @click="openEditModal(sleep)" aria-label="Edit" class="btn btn-sm btn-ghost btn-circle">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                </button>
+                <button type="button" @click="deleteSleepRecord(sleep)" aria-label="Delete" class="btn btn-sm btn-error btn-circle">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="block md:hidden space-y-4">
+        <div
+          v-for="sleep in sleeps"
+          :key="sleep.id"
+          class="card bg-base-200 shadow compact"
+        >
+          <div class="card-body gap-1">
+            <div class="flex justify-between gap-2">
+              <span class="font-medium text-base-content/70">Sleep Date/Time</span>
+              <span>{{ formatDateTime(sleep.start) }}</span>
+            </div>
+            <div class="flex justify-between gap-2">
+              <span class="font-medium text-base-content/70">Wake Date/Time</span>
+              <span>{{ formatDateTime(sleep.end) }}</span>
+            </div>
+            <div class="flex justify-between gap-2">
+              <span class="font-medium text-base-content/70">Duration</span>
+              <span>{{ formatDuration(sleep.start, sleep.end) }}</span>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+              <button type="button" class="btn btn-sm btn-ghost btn-circle" aria-label="Edit sleep record" @click="openEditModal(sleep)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </button>
+              <button type="button" class="btn btn-sm btn-error btn-circle" aria-label="Delete sleep record" @click="deleteSleepRecord(sleep)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div v-if="!loading && !error && sleeps.length > 0" class="pagination-info">
@@ -438,6 +504,27 @@ async function deleteSleepRecord(sleep: SleepReadDto) {
       </form>
     </div>
 
+    <div class="modal" :class="{ 'modal-open': showDeleteModal }">
+      <div class="modal-box">
+        <h3 class="font-bold text-lg">Delete Sleep Record?</h3>
+        <p class="py-2">Are you sure you want to delete this sleep record? This cannot be undone.</p>
+        <template v-if="sleepToDelete">
+          <div class="rounded-lg bg-base-300 p-3 text-sm space-y-1">
+            <p><span class="font-medium">Start:</span> {{ formatDateTime(sleepToDelete.start) }}</p>
+            <p><span class="font-medium">End:</span> {{ formatDateTime(sleepToDelete.end) }}</p>
+            <p><span class="font-medium">Duration:</span> {{ formatDuration(sleepToDelete.start, sleepToDelete.end) }}</p>
+          </div>
+        </template>
+        <div class="modal-action">
+          <button type="button" class="btn btn-ghost" @click="closeDeleteModal">Cancel</button>
+          <button type="button" class="btn btn-error" @click="confirmDelete">Delete</button>
+        </div>
+      </div>
+      <form method="dialog" class="modal-backdrop" @submit="closeDeleteModal">
+        <button type="submit">close</button>
+      </form>
+    </div>
+
   </div>
 </template>
 
@@ -480,13 +567,6 @@ async function deleteSleepRecord(sleep: SleepReadDto) {
 
 .actions-column {
   white-space: nowrap;
-}
-
-.header-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1rem;
 }
 
 .filter-fields {
