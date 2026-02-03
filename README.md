@@ -19,10 +19,21 @@ The [Sleep Tracker](https://www.thecsharpacademy.com/project/33/sleep-tracker) p
 
 ## Running the App
 
-1. In the terminal, navigate to the API folder (SleepTracker > SleepTracker.Api) and execute the following:  
-`dotnet run --urls "https://localhost:7288`
+In the terminal, navigate to the API folder (SleepTracker > SleepTracker.Api) and execute the following:  
+`dotnet run --urls "https://localhost:7288"`
 
-2. Then open a separate terminal and navigate to the frontend folder (SleepTracker > SleepTracker.Angular) and execute the following:  
+Continue with the instructions below for the frontend you wish to use.
+
+### Angular
+
+Open a separate terminal and navigate to the frontend folder (SleepTracker > SleepTracker.Angular) and execute the following:  
 `ng serve`
 
-3. In your web browser, go to http://localhost:4200
+In your web browser, go to http://localhost:4200
+
+### Vue
+
+Open a separate terminal and navigate to the frontend folder (SleepTracker > SleepTracker.Vue) and execute the following:  
+`npm run dev`
+
+In your web browser, go to http://localhost:5173
