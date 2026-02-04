@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import SleepList from './components/SleepList.vue'
+import ToastContainer from './components/ToastContainer.vue'
 
 const theme = ref('light')
 
@@ -51,6 +52,7 @@ onMounted(() => {
     </header>
     <main class="flex-1">
       <SleepList />
+      <ToastContainer />
     </main>
   </div>
 </template>

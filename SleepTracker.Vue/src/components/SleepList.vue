@@ -2,6 +2,9 @@
 import {ref, onMounted, onUnmounted} from 'vue';
 import {getSleeps, createSleep, updateSleep, deleteSleep} from '../services/sleep';
 import type {SleepReadDto, SleepCreateDto, SleepUpdateDto} from '../services/sleep';
+import {useToast} from '../composables/useToast';
+
+const {show: showToast} = useToast();
 
 const sleeps = ref<SleepReadDto[]>([]);
 const loading = ref(false);
@@ -46,9 +49,10 @@ async function confirmDelete() {
     await deleteSleep(sleepToDelete.value.id)
     closeDeleteModal()
     loadSleeps()
+    showToast('Sleep record deleted.', 'success');
   } catch (err) {
     console.error('Error deleting sleep: ', err)
-    alert('Failed to delete sleep record. Please try again.')
+    showToast('Failed to delete sleep record. Please try again.', 'error');
   }
 }
 
@@ -164,9 +168,10 @@ function stopSleepTimer() {
       timerStartTime.value = null;
       elapsedTime.value = '00:00:00';
       loadSleeps();
+      showToast('Sleep record saved.', 'success');
     })
     .catch((err) => {
-      console.error('Error creating sleep: ', err);
+      showToast('Failed to save sleep record.', 'error');
     });
 }
 
@@ -220,6 +225,11 @@ function fromDateTimeLocal(dateTimeLocal: string): string {
   return new Date(dateTimeLocal).toISOString();
 }
 
+function isStartBeforeEnd(startDateTimeLocal: string, endDateTimeLocal: string): boolean {
+  if (!startDateTimeLocal || !endDateTimeLocal) return true;
+  return new Date(startDateTimeLocal).getTime() < new Date(endDateTimeLocal).getTime();
+}
+
 function openCreateModal() {
   const now = new Date();
   createForm.value = {
@@ -234,6 +244,10 @@ function closeCreateModal() {
 }
 
 async function submitCreate() {
+  if (!isStartBeforeEnd(createForm.value.start, createForm.value.end)) {
+    showToast('Start time must be earlier than end time.', 'error');
+    return;
+  }
   try {
     await createSleep({
       start: fromDateTimeLocal(createForm.value.start),
@@ -241,8 +255,10 @@ async function submitCreate() {
     });
     closeCreateModal();
     loadSleeps();
+    showToast('Sleep record saved.', 'success');
   } catch (err) {
     console.error('Error creating sleep: ', err);
+    showToast('Failed to create sleep record. Please try again.', 'error');
   }
 }
 
@@ -262,6 +278,10 @@ function closeEditModal() {
 
 async function submitEdit() {
   if (!editSleep.value) return;
+  if (!isStartBeforeEnd(editForm.value.start, editForm.value.end)){
+    showToast('Start time must be earlier than end time.', 'error');
+    return;
+  }
   try {
     await updateSleep(editSleep.value.id, {
       start: fromDateTimeLocal(editForm.value.start),
@@ -269,8 +289,10 @@ async function submitEdit() {
     });
     closeEditModal();
     loadSleeps();
+    showToast('Sleep record updated.', 'success');
   } catch (err) {
     console.error('Error updating sleep: ', err);
+    showToast('Failed to update sleep record. Please try again.', 'error');
   }
 }
 
