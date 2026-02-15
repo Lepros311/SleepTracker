@@ -139,7 +139,7 @@ export function SleepList() {
             {(filterStartDate || filterEndDate) && (
               <button
                 type="button"
-                className="btn btn-ghost btn-sm btn-circle text-error flex-shrink-0 ring-1 ring-error/25 !w-7 !h-7 !min-h-0 !min-w-0 p-0 flex items-center justify-center"
+                className="btn btn-ghost btn-sm btn-circle text-error shrink-0 ring-1 ring-error/25 w-7 h-7 min-h-0 min-w-0 p-0 flex items-center justify-center"
                 onClick={() => {
                   setFilterStartDate(null);
                   setFilterEndDate(null);
