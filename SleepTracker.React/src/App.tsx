@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react'
 import { ToastContainer } from './components/ToastContainer';
+import { SleepList } from './components/SleepList';
 
 function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -50,7 +51,7 @@ function App() {
         </div>
       </header>
       <main className="flex-1">
-        {/*Sleep list will go here */}
+        <SleepList />
       </main>
       <ToastContainer />
     </div>
