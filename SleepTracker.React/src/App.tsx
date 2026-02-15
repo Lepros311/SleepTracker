@@ -1,40 +1,59 @@
-import { useState } from 'react'
+import {useState, useEffect} from 'react'
 import { ToastContainer } from './components/ToastContainer';
-import {useToast} from './contexts/ToastContext';
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
-  const {show} = useToast();
+  useEffect(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light' || saved === 'dark') {
+      setTheme(saved);
+      document.documentElement.setAttribute('data-theme', saved);
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  }, []);
+
+  function toggleTheme() {
+    const next = theme === 'light' ? 'dark' : 'light';
+    setTheme(next);
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  }
 
   return (
-    <>
-      <div>
-        <button type="button" className="btn btn-primary" onClick={() => show('Toast works!', 'success')}>Show toast</button>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <div className="min-h-screen w-full flex flex-col">
+      <header className="navbar bg-base-200 px-6 py-5 shadow-md border-b border-base-300">
+        <div className="flex-1">
+          <h1 className="text-3xl font-bold tracking-tight">Sleep Tracker</h1>
+        </div>
+        <div className="flex-none">
+          <div className="flex items-center gap-2">
+            <span className="text-base-content/70" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            </span>
+            <input
+              type="checkbox"
+              className="toggle toggle-primary"
+              checked={theme === 'dark'}
+              onChange={toggleTheme}
+              aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+            />
+            <span className="text-base-content/70" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+            </span>
+          </div>
+        </div>
+      </header>
+      <main className="flex-1">
+        {/*Sleep list will go here */}
+      </main>
       <ToastContainer />
-    </>
+    </div>
   );
 }
 
