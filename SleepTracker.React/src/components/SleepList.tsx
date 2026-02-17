@@ -16,6 +16,8 @@ export function SleepList() {
   const [timerRunning, setTimerRunning] = useState(false);
   const [elapsedTime, setElapsedTime] = useState('00:00:00');
   const [timerStartTime, setTimerStartTime] = useState<Date | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createForm, setCreateForm] = useState({start: '', end: ''});
   const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const {show: showToast} = useToast();
 
@@ -91,6 +93,40 @@ export function SleepList() {
     const s = seconds % 60;
     const pad = (n: number) => n.toString().padStart(2, '0');
     return `${pad(h)}:${pad(m)}:${pad(s)}`;
+  }
+
+  function toDateTimeLocal(isoString: string): string {
+    const d = new Date(isoString);
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
+  function fromDateTimeLocal(dateTimeLocal: string): string {
+    return new Date(dateTimeLocal).toISOString();
+  }
+
+  function isStartBeforeEnd(start: string, end: string): boolean {
+    if (!start || !end) return true;
+    return new Date(start).getTime() < new Date(end).getTime();
+  }
+
+  async function submitCreate() {
+    if (!isStartBeforeEnd(createForm.start, createForm.end)) {
+      showToast('Start time must be earlier than end time.', 'error');
+      return;
+    }
+    try {
+      await createSleep({
+        start: fromDateTimeLocal(createForm.start),
+        end: fromDateTimeLocal(createForm.end)
+      });
+      setShowCreateModal(false);
+      loadSleeps();
+      showToast('Sleep record saved.', 'success');
+    } catch (err) {
+      console.error('Error creating sleep: ', err);
+      showToast('Failed to create sleep record. Please try again.', 'error');
+    }
   }
 
   function stopSleepTimer() {
@@ -219,12 +255,19 @@ export function SleepList() {
           ) : (
             <>
               <span className="font-mono font-medium">{elapsedTime}</span>
-              <button type="button" className="btn btn-error">
+              <button type="button" onClick={stopSleepTimer} className="btn btn-error">
                 Stop
               </button>
             </>
           )}
-          <button type="button" onClick={stopSleepTimer} className="btn btn-primary">
+          <button type="button"
+            onClick={() => {
+              const now = new Date();
+              const local = toDateTimeLocal(now.toISOString());
+              setCreateForm({start: local, end: local});
+              setShowCreateModal(true);
+            }}
+            className="btn btn-primary">
             Add Sleep Record
           </button>
         </div>
@@ -317,6 +360,47 @@ export function SleepList() {
           </div>
         </>
       )}
+
+      <div className={`modal ${showCreateModal ? 'modal-open' : ''}`}>
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Add Sleep Record</h3>
+          <div className="form-control w-full gap-2 mt-4">
+            <label htmlFor="create-start" className="label">
+              <span className="label-text">Start</span>
+            </label>
+            <input
+              id="create-start"
+              type="datetime-local"
+              className="input input-bordered w-full"
+              value={createForm.start}
+              onChange={(e) => setCreateForm((prev) => ({ ...prev, start: e.target.value }))}
+            />
+            <label htmlFor="create-end" className="label">
+              <span className="label-text">End</span>
+            </label>
+            <input
+              id="create-end"
+              type="datetime-local"
+              className="input input-bordered w-full"
+              value={createForm.end}
+              onChange={(e) => setCreateForm((prev) => ({ ...prev, end: e.target.value }))}
+            />
+          </div>
+          <div className="modal-action">
+            <button type="button" className="btn btn-ghost" onClick={() => setShowCreateModal(false)}>
+              Cancel
+            </button>
+            <button type="button" onClick={submitCreate} className="btn btn-primary">
+              Save
+            </button>
+          </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button type="submit" onClick={() => setShowCreateModal(false)}>close</button>
+        </form>
+      </div>
+
+
     </div>
   );
 }
