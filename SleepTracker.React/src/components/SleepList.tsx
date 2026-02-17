@@ -1,5 +1,6 @@
-import {useState, useEffect} from 'react';
-import { getSleeps } from '../services/sleep';
+import {useState, useEffect, useRef} from 'react';
+import { getSleeps, createSleep } from '../services/sleep';
+import { useToast } from '../contexts/ToastContext';
 import type { SleepReadDto } from '../services/sleep';
 
 export function SleepList() {
@@ -12,6 +13,11 @@ export function SleepList() {
   const [totalPages, setTotalPages] = useState(0);
   const [filterStartDate, setFilterStartDate] = useState<Date | null>(null);
   const [filterEndDate, setFilterEndDate] = useState<Date | null>(null);
+  const [timerRunning, setTimerRunning] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState('00:00:00');
+  const [timerStartTime, setTimerStartTime] = useState<Date | null>(null);
+  const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const {show: showToast} = useToast();
 
   async function loadSleeps() {
     setLoading(true);
@@ -40,6 +46,11 @@ export function SleepList() {
 
   useEffect(() => {
     loadSleeps();
+    return () => {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+      }
+    };
   }, [pageNumber, filterStartDate, filterEndDate]);
 
   function formatDateTime(dateTimeString: string): string {
@@ -72,6 +83,37 @@ export function SleepList() {
     } else {
       return `${hours} hour${hours !== 1 ? 's' : ''} and ${minutes} minute${minutes !== 1 ? 's' : ''}`;
     }
+  }
+
+  function formatElapsedTime(seconds: number): string {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${pad(h)}:${pad(m)}:${pad(s)}`;
+  }
+
+  function stopSleepTimer() {
+    if (!timerStartTime) return;
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+      timerIntervalRef.current = null;
+    }
+    const endTime = new Date();
+    createSleep({
+      start: timerStartTime.toISOString(),
+      end: endTime.toISOString()
+    })
+      .then(() => {
+        setTimerRunning(false);
+        setTimerStartTime(null);
+        setElapsedTime('00:00:00');
+        loadSleeps();
+        showToast('Sleep record saved.', 'success');
+      })
+      .catch(() => {
+        showToast('Failed to save sleep record.', 'error');
+      })
   }
 
   function openEditModal(_sleep: SleepReadDto) {
@@ -154,6 +196,37 @@ export function SleepList() {
               </button>
             )}
           </div>
+        </div>
+        <div className="header-actions flex flex-wrap gap-2 items-center">
+          {!timerRunning ? (
+            <button
+              type="button"
+              onClick={() => {
+                const startTime = new Date();
+                setTimerStartTime(startTime);
+                setTimerRunning(true);
+                setElapsedTime('00:00:00');
+                if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+                timerIntervalRef.current = setInterval(() => {
+                  const elapsed = Math.floor((Date.now() - startTime.getTime()) / 1000);
+                  setElapsedTime(formatElapsedTime(elapsed));
+                }, 1000);
+              }}
+              className="btn btn-primary"
+            >
+              Start Sleep Timer
+            </button>
+          ) : (
+            <>
+              <span className="font-mono font-medium">{elapsedTime}</span>
+              <button type="button" className="btn btn-error">
+                Stop
+              </button>
+            </>
+          )}
+          <button type="button" onClick={stopSleepTimer} className="btn btn-primary">
+            Add Sleep Record
+          </button>
         </div>
       </div>
 
