@@ -1,5 +1,5 @@
 import {useState, useEffect, useRef} from 'react';
-import { getSleeps, createSleep } from '../services/sleep';
+import { getSleeps, createSleep, updateSleep, deleteSleep } from '../services/sleep';
 import { useToast } from '../contexts/ToastContext';
 import type { SleepReadDto } from '../services/sleep';
 
@@ -18,6 +18,13 @@ export function SleepList() {
   const [timerStartTime, setTimerStartTime] = useState<Date | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createForm, setCreateForm] = useState({start: '', end: ''});
+  const [createFormError, setCreateFormError] = useState<string | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editSleep, setEditSleep] = useState<SleepReadDto | null>(null);
+  const [editForm, setEditForm] = useState({start: '', end: ''});
+  const [editFormError, setEditFormError] = useState<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [sleepToDelete, setSleepToDelete] = useState<SleepReadDto | null>(null);
   const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const {show: showToast} = useToast();
 
@@ -112,10 +119,11 @@ export function SleepList() {
 
   async function submitCreate() {
     if (!isStartBeforeEnd(createForm.start, createForm.end)) {
-      showToast('Start time must be earlier than end time.', 'error');
+      setCreateFormError('Start time must be earlier than end time.');
       return;
     }
     try {
+      setCreateFormError(null);
       await createSleep({
         start: fromDateTimeLocal(createForm.start),
         end: fromDateTimeLocal(createForm.end)
@@ -126,6 +134,27 @@ export function SleepList() {
     } catch (err) {
       console.error('Error creating sleep: ', err);
       showToast('Failed to create sleep record. Please try again.', 'error');
+    }
+  }
+
+  async function submitEdit() {
+    if (!editSleep) return;
+    if (!isStartBeforeEnd(editForm.start, editForm.end)) {
+      setEditFormError('Start time must be earlier than end time.');
+      return;
+    }
+    setEditFormError(null);
+    try {
+      await updateSleep(editSleep.id, {
+        start: fromDateTimeLocal(editForm.start),
+        end: fromDateTimeLocal(editForm.end)
+      });
+      closeEditModal();
+      loadSleeps();
+      showToast('Sleep record updated.', 'success');
+    } catch (err) {
+      console.error('Error updating sleep: ', err);
+      showToast('Failed to update sleep record. Please try again.', 'error');
     }
   }
 
@@ -152,12 +181,43 @@ export function SleepList() {
       })
   }
 
-  function openEditModal(_sleep: SleepReadDto) {
-    // TODO: wire up in next step
+  function openEditModal(sleep: SleepReadDto) {
+    if (!sleep?.start || !sleep?.end) return;
+    setEditSleep(sleep);
+    setEditForm({
+      start: toDateTimeLocal(sleep.start),
+      end: toDateTimeLocal(sleep.end)
+    });
+    setEditFormError(null);
+    setShowEditModal(true);
   }
 
-  function deleteSleepRecord(_sleep: SleepReadDto) {
-    // TODO: wire up in next step
+  function closeEditModal() {
+    setShowEditModal(false);
+    setEditSleep(null);
+  }
+
+  function openDeleteModal(sleep: SleepReadDto) {
+    setSleepToDelete(sleep);
+    setShowDeleteModal(true);
+  }
+
+  function closeDeleteModal() {
+    setShowDeleteModal(false);
+    setSleepToDelete(null);
+  }
+
+  async function confirmDelete() {
+    if (!sleepToDelete) return;
+    try {
+      await deleteSleep(sleepToDelete.id);
+      closeDeleteModal();
+      loadSleeps();
+      showToast('Sleep record deleted.', 'success');
+    } catch (err) {
+      console.error('Error deleting sleep: ', err);
+      showToast('Failed to delete sleep record. Please try again.', 'error');
+    }
   }
 
   function goToFirstPage() {
@@ -265,6 +325,7 @@ export function SleepList() {
               const now = new Date();
               const local = toDateTimeLocal(now.toISOString());
               setCreateForm({start: local, end: local});
+              setCreateFormError(null);
               setShowCreateModal(true);
             }}
             className="btn btn-primary">
@@ -302,7 +363,7 @@ export function SleepList() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                         </svg>
                       </button>
-                      <button type="button" onClick={() => deleteSleepRecord(sleep)} aria-label="Delete" className="btn btn-sm btn-error btn-circle">
+                      <button type="button" onClick={() => openDeleteModal(sleep)} aria-label="Delete" className="btn btn-sm btn-error btn-circle">
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
@@ -336,7 +397,7 @@ export function SleepList() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                       </svg>
                     </button>
-                    <button type="button" className="btn btn-sm btn-error btn-circle" aria-label="Delete sleep record" onClick={() => deleteSleepRecord(sleep)}>
+                    <button type="button" className="btn btn-sm btn-error btn-circle" aria-label="Delete sleep record" onClick={() => openDeleteModal(sleep)}>
                       <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
@@ -373,7 +434,17 @@ export function SleepList() {
               type="datetime-local"
               className="input input-bordered w-full"
               value={createForm.start}
-              onChange={(e) => setCreateForm((prev) => ({ ...prev, start: e.target.value }))}
+              onChange={(e) => {
+                setCreateForm((prev) => ({ ...prev, start: e.target.value }));
+                setCreateFormError(null);
+              }}
+              onBlur={() => {
+                setCreateFormError(
+                  createForm.start && createForm.end && !isStartBeforeEnd(createForm.start, createForm.end)
+                    ? 'Start time must be earlier than end time.'
+                    : null
+                );
+              }}
             />
             <label htmlFor="create-end" className="label">
               <span className="label-text">End</span>
@@ -383,8 +454,19 @@ export function SleepList() {
               type="datetime-local"
               className="input input-bordered w-full"
               value={createForm.end}
-              onChange={(e) => setCreateForm((prev) => ({ ...prev, end: e.target.value }))}
+              onChange={(e) => {
+                setCreateForm((prev) => ({ ...prev, end: e.target.value }));
+                setCreateFormError(null);
+              }}
+              onBlur={() => {
+                setCreateFormError(
+                  createForm.start && createForm.end && !isStartBeforeEnd(createForm.start, createForm.end)
+                    ? 'Start time must be earlier than end time.'
+                    : null
+                );
+              }}
             />
+            {createFormError && (<p className="text-error text-sm mt-1">{createFormError}</p>)}
           </div>
           <div className="modal-action">
             <button type="button" className="btn btn-ghost" onClick={() => setShowCreateModal(false)}>
@@ -397,6 +479,93 @@ export function SleepList() {
         </div>
         <form method="dialog" className="modal-backdrop">
           <button type="submit" onClick={() => setShowCreateModal(false)}>close</button>
+        </form>
+      </div>
+
+      <div className={`modal ${showEditModal ? 'modal-open' : ''}`}>
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Edit Sleep Record</h3>
+          <div className="form-control w-full gap-2 mt-4">
+            <label htmlFor="edit-start" className="label">
+              <span className="label-text">Start</span>
+            </label>
+            <input
+              id="edit-start"
+              type="datetime-local"
+              className="input input-bordered w-full"
+              value={editForm.start}
+              onChange={(e) => {
+                setEditForm((prev) => ({ ...prev, start: e.target.value }));
+                setEditFormError(null);
+              }}
+              onBlur={() => {
+                setEditFormError(
+                  editForm.start && editForm.end && !isStartBeforeEnd(editForm.start, editForm.end)
+                    ? 'Start time must be earlier than end time.'
+                    : null
+                );
+              }}
+            />
+            <label htmlFor="edit-end" className="label">
+              <span className="label-text">End</span>
+            </label>
+            <input
+              id="edit-end"
+              type="datetime-local"
+              className="input input-bordered w-full"
+              value={editForm.end}
+              onChange={(e) => {
+                setEditForm((prev) => ({ ...prev, end: e.target.value }));
+                setEditFormError(null);
+              }}
+              onBlur={() => {
+                setEditFormError(
+                  editForm.start && editForm.end && !isStartBeforeEnd(editForm.start, editForm.end)
+                    ? 'Start time must be earlier than end time.'
+                    : null
+                );
+              }}
+            />
+            {editFormError && (
+              <p className="text-error text-sm mt-1">{editFormError}</p>
+            )}
+          </div>
+          <div className="modal-action">
+            <button type="button" className="btn btn-ghost" onClick={closeEditModal}>
+              Cancel
+            </button>
+            <button type="button" onClick={submitEdit} className="btn btn-primary">
+              Save
+            </button>
+          </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button type="submit" onClick={closeEditModal}>close</button>
+        </form>
+      </div>
+
+      <div className={`modal ${showDeleteModal ? 'modal-open' : ''}`}>
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Delete Sleep Record?</h3>
+          <p className="py-2">Are you sure you want to delete this sleep record? This cannot be undone.</p>
+          {sleepToDelete && (
+            <div className="rounded-lg bg-base-300 p-3 text-sm space-y-1">
+              <p><span className="font-medium">Start:</span> {formatDateTime(sleepToDelete.start)}</p>
+              <p><span className="font-medium">End:</span> {formatDateTime(sleepToDelete.end)}</p>
+              <p><span className="font-medium">Duration:</span> {formatDuration(sleepToDelete.start, sleepToDelete.end)}</p>
+            </div>
+          )}
+          <div className="modal-action">
+            <button type="button" className="btn btn-ghost" onClick={closeDeleteModal}>
+              Cancel
+            </button>
+            <button type="button" className="btn btn-error" onClick={confirmDelete}>
+              Delete
+            </button>
+          </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button type="submit" onClick={closeDeleteModal}>close</button>
         </form>
       </div>
 
