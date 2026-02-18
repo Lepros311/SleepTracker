@@ -37,3 +37,10 @@ Open a separate terminal and navigate to the frontend folder (SleepTracker > Sle
 `npm run dev`
 
 In your web browser, go to http://localhost:5173
+
+### React
+
+Open a separate terminal and navigate to the frontend folder (SleepTracker > SleepTracker.React) and execute the following:  
+`npm run dev`
+
+In your web browser, go to http://localhost:5173
